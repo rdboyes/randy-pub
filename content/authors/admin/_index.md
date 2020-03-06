@@ -1,8 +1,7 @@
 ---
 authors:
 - admin
-bio: My research interests include distributed robotics, mobile computing and programmable
-  matter.
+bio: Epidemiologist studying the influence of environmental factors on children's physical activity.   
 education:
   courses:
   - course: PhD in Epidemiology

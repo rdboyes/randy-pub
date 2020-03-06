@@ -1,8 +1,7 @@
 ---
 authors:
 - admin
-bio: My research interests include distributed robotics, mobile computing and programmable
-  matter.
+bio: Epidemiologist studying the influence of environmental factors on children's physical activity.   
 education:
   courses:
   - course: PhD in Epidemiology
@@ -16,9 +15,11 @@ education:
     year: 2013
 email: "randy.boyes@queensu.ca"
 interests:
-- Artificial Intelligence
+- R Programming
+- Geospatial Analysis
 - Prediction Modelling
 - Physical Activity
+- Artificial Intelligence
 name: Randy Boyes
 organizations:
 - name: Queen's University
