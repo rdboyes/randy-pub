@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>William Pickett | Randy Boyes</title>
+    <link>/authors/william-pickett/</link>
+      <atom:link href="/authors/william-pickett/index.xml" rel="self" type="application/rss+xml" />
+    <description>William Pickett</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Fri, 01 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>William Pickett</title>
+      <link>/authors/william-pickett/</link>
+    </image>
+    
+    <item>
+      <title>Gender-specific associations between involvement in team sport culture and canadian adolescents’ substance-use behavior</title>
+      <link>/publication/journal-article-sport/</link>
+      <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
+      <guid>/publication/journal-article-sport/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

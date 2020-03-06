@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Source Themes | Randy Boyes</title>
+    <link>/tags/source-themes/</link>
+      <atom:link href="/tags/source-themes/index.xml" rel="self" type="application/rss+xml" />
+    <description>Source Themes</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Fri, 01 Mar 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>Source Themes</title>
+      <link>/tags/source-themes/</link>
+    </image>
+    
+    <item>
+      <title>Caregiver Out-of-Pocket Costs for Octogenarian Intensive Care Unit Patients in Canada</title>
+      <link>/publication/journal-article-icu/</link>
+      <pubDate>Fri, 01 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>/publication/journal-article-icu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gender-specific associations between involvement in team sport culture and canadian adolescents’ substance-use behavior</title>
+      <link>/publication/journal-article-sport/</link>
+      <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
+      <guid>/publication/journal-article-sport/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
