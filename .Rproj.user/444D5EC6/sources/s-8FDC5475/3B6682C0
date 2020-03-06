@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1583518708247.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "11187478",
+    "id" : "3B6682C0",
+    "lastKnownWriteTime" : 1583518826,
+    "last_content_update" : 1583518826200,
+    "path" : "D:/Projects/randy-pub/themes/hugo-academic/netlify.toml",
+    "project_path" : "themes/hugo-academic/netlify.toml",
+    "properties" : {
+        "cursorPosition" : "7,22",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "toml"
+}
