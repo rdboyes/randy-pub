@@ -90,7 +90,7 @@ address = {street = "62 5 Field Company Lane", city = "Kingston", region = "ON",
 
 # Geographic coordinates
 # To get your coordinates, right-click on Google Maps and choose "What's here?". The coords will show up at the bottom.
-coordinates = {latitude = "44.2263376", longitude = "-76.495964"}
+coordinates = {latitude = "44.2261435", longitude = "-76.4928161"}
 
 # Directions for visitors to locate you.
 directions = "Office on second floor, enter the main desk area through the first door on the right."

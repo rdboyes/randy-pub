@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2081349545",
+    "hash" : "171807718",
     "id" : "8B6981BD",
-    "lastKnownWriteTime" : 1583526446,
-    "last_content_update" : 1583526446732,
+    "lastKnownWriteTime" : 1583528784,
+    "last_content_update" : 1583528784820,
     "path" : "D:/Projects/randy-pub/config/_default/params.toml",
     "project_path" : "config/_default/params.toml",
     "properties" : {
-        "cursorPosition" : "84,9",
-        "scrollLine" : "66"
+        "cursorPosition" : "92,37",
+        "scrollLine" : "76"
     },
     "read_only" : false,
     "read_only_alternatives" : [
