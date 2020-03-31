@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stress | Randy Boyes</title>
+    <link>/tags/stress/</link>
+      <atom:link href="/tags/stress/index.xml" rel="self" type="application/rss+xml" />
+    <description>Stress</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sun, 29 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>Stress</title>
+      <link>/tags/stress/</link>
+    </image>
+    
+    <item>
+      <title>The Post-Secondary Student Stressors Index(PSSI): Proof of Concept and Implications for Use</title>
+      <link>/publication/journal-article-stress/</link>
+      <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>/publication/journal-article-stress/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
