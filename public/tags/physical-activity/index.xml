@@ -5,12 +5,20 @@
     <link>/tags/physical-activity/</link>
       <atom:link href="/tags/physical-activity/index.xml" rel="self" type="application/rss+xml" />
     <description>Physical Activity</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Fri, 01 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
       <title>Physical Activity</title>
       <link>/tags/physical-activity/</link>
     </image>
+    
+    <item>
+      <title>A qualitative investigation of unsupervised outdoor activities for 10- to 13-year-old children: I like adventuring but I don&#39;t like adventuring without being careful</title>
+      <link>/publication/journal-article-qual-play/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>/publication/journal-article-qual-play/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Gender-specific associations between involvement in team sport culture and canadian adolescents’ substance-use behavior</title>
