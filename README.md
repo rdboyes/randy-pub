@@ -1,2 +1,0 @@
-# randy-pub
- Academic Website

@@ -1,6 +1,7 @@
 ---
 authors:
 - admin
+name: Randy Boyes
 bio: Epidemiologist studying the influence of environmental factors on children's physical activity.   
 education:
   courses:
@@ -20,7 +21,6 @@ interests:
 - Prediction Modelling
 - Physical Activity
 - Artificial Intelligence
-name: Randy Boyes
 organizations:
 - name: Queen's University
   url: ""

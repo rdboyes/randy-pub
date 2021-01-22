@@ -18,10 +18,22 @@ date_format = "Jan 2006"
 #   Leave `date_end` empty if it's your current employer.
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 [[experience]]
-  title = "Research Assistant"
-  company = "University of Manitoba"
+  title = "Data Scientist"
+  company = "Sunnybrook Health Sciences Center"
   company_url = ""
-  location = "Winnipeg, MB"
+  location = "Remote"
+  date_start = "2020-09-01"
+  description = """
+  Responsibilities include:
+  
+  * Development and validation of prediction models for clincal outcomes
+  """
+
+[[experience]]
+  title = "Data Analyst"
+  company = "University of Manitoba & Canadian Forces Health Services Group"
+  company_url = ""
+  location = "Remote"
   date_start = "2018-04-01"
   date_end = "2020-03-31"
   description = """

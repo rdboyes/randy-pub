@@ -18,128 +18,63 @@
   </url>
   
   <url>
-    <loc>/talk/example/</loc>
+    <loc>/</loc>
     <lastmod>2030-06-01T13:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/talk/</loc>
+    <loc>/talk/example-talk/</loc>
     <lastmod>2030-06-01T13:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/admin/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <loc>/event/</loc>
+    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/publication_types/2/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <loc>/categories/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/publication/journal-article-qual-play/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <loc>/post/2020-12-01-r-rmarkdown/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <loc>/tag/plot/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/christina-han/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <loc>/post/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/david-swanlund/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <loc>/category/r/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/ian-janssen/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <loc>/tag/r-markdown/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/louise-masse/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/authors/mariana-brussoni/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/authors/nadine-schuurman/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/neighbourhood-design/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/outdoor-play/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/physical-activity/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication_types/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <loc>/tag/regression/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/yingyi-lin/</loc>
-    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/authors/brooke-linden/</loc>
-    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/authors/heather-stuart/</loc>
-    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/mental-health/</loc>
-    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/stress/</loc>
-    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/students/</loc>
-    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication/journal-article-stress/</loc>
-    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
+    <loc>/post/writing-technical-content/</loc>
+    <lastmod>2019-07-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -148,33 +83,43 @@
   </url>
   
   <url>
-    <loc>/authors/ana-johnson/</loc>
-    <lastmod>2019-03-01T00:00:00+00:00</lastmod>
+    <loc>/author/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/publication/journal-article-icu/</loc>
-    <lastmod>2019-03-01T00:00:00+00:00</lastmod>
+    <loc>/publication-type/3/</loc>
+    <lastmod>2019-04-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/health-economics/</loc>
-    <lastmod>2019-03-01T00:00:00+00:00</lastmod>
+    <loc>/publication/preprint/</loc>
+    <lastmod>2019-04-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/icu/</loc>
-    <lastmod>2019-03-01T00:00:00+00:00</lastmod>
+    <loc>/authors/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/iwona-bielska/</loc>
-    <lastmod>2019-03-01T00:00:00+00:00</lastmod>
+    <loc>/publication_types/</loc>
+    <lastmod>2019-04-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/authors/raymond-fong/</loc>
-    <lastmod>2019-03-01T00:00:00+00:00</lastmod>
+    <loc>/publication/</loc>
+    <lastmod>2019-04-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tag/source-themes/</loc>
+    <lastmod>2019-04-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/jupyter/</loc>
+    <lastmod>2019-09-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -188,57 +133,12 @@
   </url>
   
   <url>
-    <loc>/privacy/</loc>
-    <lastmod>2018-06-28T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/</loc>
-    <lastmod>2018-06-28T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/terms/</loc>
-    <lastmod>2018-06-28T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/authors/dylan-osullivan/</loc>
-    <lastmod>2017-12-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication/journal-article-sport/</loc>
-    <lastmod>2017-12-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/authors/michael-mcisaac/</loc>
-    <lastmod>2017-12-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/sport/</loc>
-    <lastmod>2017-12-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/substance-use/</loc>
-    <lastmod>2017-12-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/authors/william-pickett/</loc>
-    <lastmod>2017-12-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/deep-learning/</loc>
+    <loc>/tag/deep-learning/</loc>
     <lastmod>2016-04-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/demo/</loc>
+    <loc>/tag/demo/</loc>
     <lastmod>2016-04-27T00:00:00+00:00</lastmod>
   </url>
   
@@ -258,7 +158,58 @@
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>/tag/academic/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/category/demo/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/getting-started/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/author/%E5%90%B3%E6%81%A9%E9%81%94/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tag/%E5%BC%80%E6%BA%90/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/category/%E6%95%99%E7%A8%8B/</loc>
+    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/publication-type/2/</loc>
+    <lastmod>2015-09-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/publication/journal-article/</loc>
+    <lastmod>2015-09-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/author/robert-ford/</loc>
+    <lastmod>2015-09-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/publication-type/1/</loc>
+    <lastmod>2013-07-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/publication/conference-paper/</loc>
+    <lastmod>2013-07-01T00:00:00+00:00</lastmod>
   </url>
   
 </urlset>
