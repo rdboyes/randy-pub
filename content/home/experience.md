@@ -18,15 +18,32 @@ date_format = "Jan 2006"
 #   Leave `date_end` empty if it's your current employer.
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 [[experience]]
+  title = "Director of Analytics"
+  company = "Presage Group, Inc."
+  company_url = "http://www.presagegroup.com"
+  location = "Remote"
+  date_start = "2021-03-01"
+  description = """
+Team leader for analytics department at a small consulting company working with multinational companies in the aerospace industry, including
+airlines, air traffic control, and training organizations. Responsibilities include:
+* Provide statistical and technical advice to executive team, including developing client proposals and guiding internal technical decisions
+* Develop automated data cleaning, validation, and reporting systems to improve department efficiency using rmarkdown/quarto, targets,
+pointblank, and tidyverse packages in R
+* Work with external technical contractors to develop an improved data collection system using python and Google Cloud products.
+  """
+
+
+[[experience]]
   title = "Data Scientist"
   company = "Sunnybrook Health Sciences Center"
   company_url = ""
   location = "Remote"
   date_start = "2020-09-01"
+  date_end = "2021-03-01"
   description = """
   Responsibilities include:
   
-  * Development and validation of prediction models for clincal outcomes
+  * Development and validation of prediction models for clinical outcomes
   """
 
 [[experience]]

@@ -7,7 +7,7 @@ education:
   courses:
   - course: PhD in Epidemiology
     institution: Queen's University
-    year: 2020
+    year: 2023
   - course: MSc in Epidemiology
     institution: Queen's University
     year: 2015
