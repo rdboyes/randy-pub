@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Students | Randy Boyes</title>
+    <link>http://www.randy.pub/tag/students/</link>
+      <atom:link href="http://www.randy.pub/tag/students/index.xml" rel="self" type="application/rss+xml" />
+    <description>Students</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sun, 29 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>http://www.randy.pub/images/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_2.png</url>
+      <title>Students</title>
+      <link>http://www.randy.pub/tag/students/</link>
+    </image>
+    
+    <item>
+      <title>The Post-Secondary Student Stressors Index(PSSI): Proof of Concept and Implications for Use</title>
+      <link>http://www.randy.pub/publication/journal-article-stress/</link>
+      <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>http://www.randy.pub/publication/journal-article-stress/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

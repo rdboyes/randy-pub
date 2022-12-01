@@ -282,3 +282,10 @@ plugins_js  = []
 ############################
 [icon.pack]
   ai = false  # Academicons icon pack https://jpswalsh.github.io/academicons/
+
+############################
+# Quarto support
+############################
+
+[markup.goldmark.renderer]
+  unsafe= true
