@@ -161,9 +161,7 @@ td {
 
 td[scope="header"] {
     border: var(--border-thickness) solid var(--text-color);
-    padding: calc((var(--line-height) / 2))
-        calc(1ch - var(--border-thickness) / 2)
-        calc((var(--line-height) / 2) - (var(--border-thickness)));
+    padding: 0.6rem calc(1ch - 1px) calc(0.6rem - 2px);
     line-height: var(--line-height);
     vertical-align: top;
     text-align: left;
