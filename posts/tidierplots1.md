@@ -15,46 +15,30 @@ I've had, and the solutions I've come up with so far.
 
 ## Version 1
 
-To start, I want to show you the basic idea of the package, as it existed when I first wrote out the original script. I had two structs:
+To start, I want to show you the basic idea of the package, as it existed when I first wrote out the original script.
+The 100-or-so lines of julia I had were enough to get something like a minimal working example going:
 
 ```julia
-using Makie, CairoMakie, AlgebraOfGraphics
-using PalmerPenguins, DataFrames
+test_plot = @ggplot(data = penguins, aes(color = species)) +
+    @geom_point(aes(x = bill_length_mm, y = bill_depth_mm)) +
+    @geom_smooth(aes(x = bill_length_mm, y = bill_depth_mm),
+        method = "lm")
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()))
+draw_ggplot(test_plot)
+```
 
-struct geom
-    visual::Union{Symbol, Nothing}
-    aes::Dict
-    args::Dict
-    analysis::Any
-    required_aes::AbstractArray
-end
+![](/assets/original_tidierplot.png)
 
+At the risk of over-explaining, lets look at what is happening here. First, the `@ggplot` call is calling this code to create a `ggplot`:
+
+```julia
 struct ggplot
     geoms::AbstractArray
     default_aes::Dict
     data::Symbol
     axis::NamedTuple
 end
-```
 
-A method to add things to a `ggplot`, which essentially just adds any `geom` to an internal array inside the `ggplot`:
-
-```julia
-function Base.:+(x::ggplot, y...)::ggplot
-    result = ggplot(vcat(x.geoms, [i for i in y]),
-        x.default_aes,
-        x.data,
-        x.axis)
-
-    return result
-end
-```
-
-A function to turn arguments passed to a geom into two dictionaries, one for things inside `aes` and one for things outside of it:
-
-```julia
 function extract_aes(geom)
     aes_dict = Dict{String, Symbol}()
     args_dict = Dict{String, Any}()
@@ -78,11 +62,71 @@ function extract_aes(geom)
 
     return (aes_dict, args_dict)
 end
+
+macro ggplot(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+
+    haskey(args_dict, "height") ?
+        height = args_dict["height"] :
+        height = 400
+
+    haskey(args_dict, "width") ?
+        width = args_dict["width"] :
+        width = 600
+
+    haskey(args_dict, "data") ?
+        plot_data = args_dict["data"] :
+        plot_data = nothing
+
+    ggplot([], aes_dict,
+            AlgebraOfGraphics.data(Base.eval(Main, plot_data)),
+            (height = height, width = width))
+end
 ```
 
-A couple of geom creation macros, which essentially build geom structs with the appropriate arguments:
+In a diagram, what's going on is this:
+
+~~~
+<figure>
+<pre>
+┌─────────┬────────────────────────────────────────┐
+│ @ggplot |(data = penguins, aes(color = species)) │
+└─────────┴────────────────────────────────────────┘
+     │                       │
+     │ defaults              │ extract_aes
+     │                       │
+     │   ┌─────────────────────────────────────────┐
+     └───| aes_dict: "color" => "species"          │
+         │ args_dict: "data" => "penguins"         │
+         │            "height" => 400              │
+         │            "width" => 600               │
+         └─────────────────────────────────────────┘
+                             │
+                             │ returns
+          ggplot object      │
+         ┌─────────────────────────────────────────┐
+         | geoms = []  # empty, currently          │
+         │ default_aes: "color" => "species"       │
+         │ plot_data: penguins                     │
+         │ axis: (height = 400, width = 600)       │
+         └─────────────────────────────────────────┘
+</pre>
+</figure>
+~~~
+
+The `extract_aes` function pulls the arguments into a dictionary, combines them with defaults as appropriate, and the `@ggplot` macro finally returns a `ggplot` object.
+
+Similar code creates `geom` objects:
 
 ```julia
+struct geom
+    visual::Union{Symbol, Nothing}
+    aes::Dict
+    args::Dict
+    analysis::Any
+    required_aes::AbstractArray
+end
+
 macro geom_point(exprs...)
     geom_visual = :Scatter
     aes_dict, args_dict = extract_aes(:($(exprs)))
@@ -90,7 +134,38 @@ macro geom_point(exprs...)
     required_aes = ["x", "y"]
     return geom(geom_visual, aes_dict, args_dict, nothing, required_aes)
 end
+```
 
+
+~~~
+<figure>
+<pre>
+┌─────────────┬──────────────────────────────────────────────┐
+│ @geom_point | (aes(x = bill_length_mm, y = bill_depth_mm)) │
+└─────────────┴──────────────────────────────────────────────┘
+     │                       │
+     │ defaults              │ extract_aes
+     │                       │
+     │    ┌─────────────────────────────────────────┐
+     │    | aes_dict: "x" => "bill_length_mm"       │
+     │    │           "y" => "bill_depth_mm"        │
+     │    └─────────────────────────────────────────┘
+     │                        │
+     │                        │ returns
+     │     geom_point_object  │
+     │    ┌─────────────────────────────────────────┐
+     │    | visual = :Scatter                       │
+     │    │ aes: "x" => "bill_length_mm"            │
+     │    │      "y" => "bill_depth_mm"             │
+     └─── │ args: Dict()                            │
+          │ analysis: nothing                       │
+          │ required_aes: ["x", "y"]                │
+          └─────────────────────────────────────────┘
+</pre>
+</figure>
+~~~
+
+```julia
 macro geom_smooth(exprs...)
     geom_visual = nothing
     aes_dict, args_dict = extract_aes(:($(exprs)))
@@ -105,7 +180,85 @@ macro geom_smooth(exprs...)
 end
 ```
 
-A way to convert the geom objects into `AlgebraOfGraphics` Layer objects:
+~~~
+<figure>
+<pre>
+┌──────────────┬─────────────────────────────────────────────┐
+│ @geom_smooth | (aes(x = bill_length_mm, y = bill_depth_mm),│
+│              │ method = "lm")                              │
+└──────────────┴─────────────────────────────────────────────┘
+     │                       │
+     │ defaults              │ extract_aes
+     │                       │
+     │    ┌─────────────────────────────────────────┐
+     │    | aes_dict: "x" => "bill_length_mm"       │
+     │    │           "y" => "bill_depth_mm"        │
+     │    │ args_dict: "method" => "lm"             │
+     │    └─────────────────────────────────────────┘
+     │                        │
+     │                        │ returns
+     │     geom_smooth_object │
+     │    ┌─────────────────────────────────────────┐
+     │    | visual = nothing                        │
+     │    │ aes: "x" => "bill_length_mm"            │
+     │    │      "y" => "bill_depth_mm"             │
+     └─── │ args: "method" => "lm"                  │
+          │ analysis: AlgebraOfGraphics.linear      │
+          │ required_aes: ["x", "y"]                │
+          └─────────────────────────────────────────┘
+</pre>
+</figure>
+~~~
+
+The `extract_aes` function pulls the arguments into a dictionary, combines them with defaults as appropriate, and the `@geom_*` macro finally returns a `geom` object.
+
+With our objects created, we need a method to combine them. The following method to adds things to a `ggplot`, which essentially just adds any `geom` to an internal array inside the `ggplot`:
+
+```julia
+function Base.:+(x::ggplot, y...)::ggplot
+    result = ggplot(vcat(x.geoms, [i for i in y]),
+        x.default_aes,
+        x.data,
+        x.axis)
+
+    return result
+end
+```
+
+The result of our addition is something like this:
+
+~~~
+<figure>
+<pre>
+ggplot object
+┌──────────────────────────────────────┐
+| geoms =                              │
+│┌────────────────────────────────────┐│
+│| visual = nothing                   ││
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: "method" => "lm"             ││
+││ analysis: AlgebraOfGraphics.linear ││
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│┌────────────────────────────────────┐│
+│| visual = :Scatter                  ││
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: Dict()                       ││
+││ analysis: nothing                  ││
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│                                      │
+│ default_aes: "color" => "species"    │
+│ plot_data: penguins                  │
+│ axis: (height = 400, width = 600)    │
+└──────────────────────────────────────┘
+</pre>
+</figure>
+~~~
+
+In order to actually plot this object, I needed a way to convert the geom objects into `AlgebraOfGraphics` Layer objects:
 
 ```julia
 function geom_to_layer(geom)
@@ -165,20 +318,119 @@ function draw_ggplot(plot::ggplot)
 end
 ```
 
-These 100-or-so lines of julia were enough to get something like a minimal working example going:
+Algebra of Graphics plots need four parts: Visual, Analysis, Data, and Mapping. Each required part is extracted preferentially from the geom, and from the ggplot if it isn't present. Mapping is
+constructed by passing the "required_aes" in order as positional arguments, and non-required aes as keyword arguments.
+
+~~~
+<figure>
+<pre>
+ggplot object
+┌──────────────────────────────────────┐
+| geoms =                              │
+│┌────────────────────────────────────┐│
+│| visual = nothing                   ││
+││ aes: "x" => "bill_length_mm" ──────┼┼─┬── mapping(:bill_length_mm,
+││      "y" => "bill_depth_mm"  ──────┼┼─┤           :bill_depth_mm;
+││ args: "method" => "lm"             ││ │           color = :species)
+││ analysis: AlgebraOfGraphics.linear ││ │
+││ required_aes: ["x", "y"]     ──────┼┼─┤
+│└────────────────────────────────────┘│ │
+│┌────────────────────────────────────┐│ │
+│| visual = :Scatter                  ││ │
+││ aes: "x" => "bill_length_mm"       ││ │
+││      "y" => "bill_depth_mm"        ││ │
+││ args: Dict()                       ││ │
+││ analysis: nothing                  ││ │
+││ required_aes: ["x", "y"]           ││ │
+│└────────────────────────────────────┘│ │
+│                                      │ │
+│ default_aes: "color" => "species" ───┼─┘
+│ plot_data: penguins                  │
+│ axis: (height = 400, width = 600)    │
+└──────────────────────────────────────┘
+</pre>
+</figure>
+~~~
+
+Data comes from the "data" value in the geom's arg dict if available (it's not), and from plot_data in the ggplot otherwise:
+
+~~~
+<figure>
+<pre>
+ggplot object
+┌──────────────────────────────────────┐
+| geoms =                              │
+│┌────────────────────────────────────┐│
+│| visual = nothing                   ││
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: "method" => "lm"             ││
+││ analysis: AlgebraOfGraphics.linear ││
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│┌────────────────────────────────────┐│
+│| visual = :Scatter                  ││
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: Dict()                       ││
+││ analysis: nothing                  ││
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│                                      │
+│ default_aes: "color" => "species"    │
+│ plot_data: penguins ─────────────────┼─ data(penguins)
+│ axis: (height = 400, width = 600)    │
+└──────────────────────────────────────┘
+</pre>
+</figure>
+~~~
+
+Visual and Analysis always come from the geom:
+
+~~~
+<figure>
+<pre>
+ggplot object
+┌──────────────────────────────────────┐
+| geoms =                              │
+│┌────────────────────────────────────┐│
+│| visual = nothing ──────────────────┼┼─ no visual
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: "method" => "lm"             ││
+││ analysis: AlgebraOfGraphics.linear ┼┼─ linear()
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│┌────────────────────────────────────┐│
+│| visual = :Scatter ─────────────────┼┼─ visual(:Scatter)
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: Dict()                       ││
+││ analysis: nothing ─────────────────┼┼─ no analysis
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│                                      │
+│ default_aes: "color" => "species"    │
+│ plot_data: penguins                  │
+│ axis: (height = 400, width = 600)    │
+└──────────────────────────────────────┘
+</pre>
+</figure>
+~~~
+
+So this all translates to the AoG code:
 
 ```julia
-test_plot = @ggplot(data = penguins, aes(color = species)) +
-    @geom_point(aes(x = bill_length_mm, y = bill_depth_mm)) +
-    @geom_smooth(aes(x = bill_length_mm, y = bill_depth_mm),
-        method = "lm")
-
-draw_ggplot(test_plot)
+data(penguins) *
+  visual(:Scatter) *
+  mapping(:bill_length_mm, :bill_depth_mm; color = :species) +
+data(penguins) *
+  linear() *
+  mapping(:bill_length_mm, :bill_depth_mm; color = :species) |>
+  draw(axis = (height = 400, width = 600))
 ```
 
-![](/assets/original_tidierplot.png)
-
-At this point, I was convinced that this was going to be easy, and I pushed [essentially this code](https://github.com/TidierOrg/TidierPlots.jl/tree/c1d97aee2758498806504e740a000bc84ff55d34) plus a PkgTemplates skeleton to a repo as version 0.1.0.
+Which produces the plot! At this point, I was convinced that this was going to be easy, and I pushed [essentially this code](https://github.com/TidierOrg/TidierPlots.jl/tree/c1d97aee2758498806504e740a000bc84ff55d34) plus a PkgTemplates skeleton to a repo as version 0.1.0.
 How hard could this really be?
 
 ---

@@ -6,6 +6,8 @@
 
 ---
 
+# In Progress
+
 ## Quick Wins
 
 The early development on TidierPlots felt seamless. R's ggplot has a behaviour where plots will show automatically when you create them, and I was able to
