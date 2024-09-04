@@ -49,37 +49,23 @@
 <h2 id="making_tidierplotsjl"><a href="#making_tidierplotsjl" class="header-anchor">Making TidierPlots.jl</a></h2>
 <p>If you&#39;re unfamiliar, <a href="https://github.com/TidierOrg/TidierPlots.jl">TidierPlots</a> is my attempt to build a more modern-feeling, 100&#37; julia version of the popular R data visualization package <a href="https://ggplot2.tidyverse.org/">ggplot2</a>. This is my first julia package, and I have already made quite a few mistakes in developing it. This series of posts will walk through my experience of transforming a script into a package, the problems I&#39;ve had, and the solutions I&#39;ve come up with so far.</p>
 <h2 id="version_1"><a href="#version_1" class="header-anchor">Version 1</a></h2>
-<p>To start, I want to show you the basic idea of the package, as it existed when I first wrote out the original script. I had two structs:</p>
-<pre><code class="julia hljs"><span class="hljs-keyword">using</span> Makie, CairoMakie, AlgebraOfGraphics
-<span class="hljs-keyword">using</span> PalmerPenguins, DataFrames
+<p>To start, I want to show you the basic idea of the package, as it existed when I first wrote out the original script. The 100-or-so lines of julia I had were enough to get something like a minimal working example going:</p>
+<pre><code class="julia hljs">test_plot = <span class="hljs-meta">@ggplot</span>(data = penguins, aes(color = species)) +
+    <span class="hljs-meta">@geom_point</span>(aes(x = bill_length_mm, y = bill_depth_mm)) +
+    <span class="hljs-meta">@geom_smooth</span>(aes(x = bill_length_mm, y = bill_depth_mm),
+        method = <span class="hljs-string">&quot;lm&quot;</span>)
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()))
-
-<span class="hljs-keyword">struct</span> geom
-    visual::<span class="hljs-built_in">Union</span>{<span class="hljs-built_in">Symbol</span>, <span class="hljs-built_in">Nothing</span>}
-    aes::<span class="hljs-built_in">Dict</span>
-    args::<span class="hljs-built_in">Dict</span>
-    analysis::<span class="hljs-built_in">Any</span>
-    required_aes::<span class="hljs-built_in">AbstractArray</span>
-<span class="hljs-keyword">end</span>
-
-<span class="hljs-keyword">struct</span> ggplot
+draw_ggplot(test_plot)</code></pre>
+<p><img src="/assets/original_tidierplot.png" alt="" /></p>
+<p>At the risk of over-explaining, lets look at what is happening here. First, the <code>@ggplot</code> call is calling this code to create a <code>ggplot</code>:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">struct</span> ggplot
     geoms::<span class="hljs-built_in">AbstractArray</span>
     default_aes::<span class="hljs-built_in">Dict</span>
     data::<span class="hljs-built_in">Symbol</span>
     axis::<span class="hljs-built_in">NamedTuple</span>
-<span class="hljs-keyword">end</span></code></pre>
-<p>A method to add things to a <code>ggplot</code>, which essentially just adds any <code>geom</code> to an internal array inside the <code>ggplot</code>:</p>
-<pre><code class="julia hljs"><span class="hljs-keyword">function</span> Base.:+(x::ggplot, y...)::ggplot
-    result = ggplot(vcat(x.geoms, [i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> y]),
-        x.default_aes,
-        x.data,
-        x.axis)
+<span class="hljs-keyword">end</span>
 
-    <span class="hljs-keyword">return</span> result
-<span class="hljs-keyword">end</span></code></pre>
-<p>A function to turn arguments passed to a geom into two dictionaries, one for things inside <code>aes</code> and one for things outside of it:</p>
-<pre><code class="julia hljs"><span class="hljs-keyword">function</span> extract_aes(geom)
+<span class="hljs-keyword">function</span> extract_aes(geom)
     aes_dict = <span class="hljs-built_in">Dict</span>{<span class="hljs-built_in">String</span>, <span class="hljs-built_in">Symbol</span>}()
     args_dict = <span class="hljs-built_in">Dict</span>{<span class="hljs-built_in">String</span>, <span class="hljs-built_in">Any</span>}()
 
@@ -101,17 +87,100 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
     <span class="hljs-keyword">end</span>
 
     <span class="hljs-keyword">return</span> (aes_dict, args_dict)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">macro</span> ggplot(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+
+    haskey(args_dict, <span class="hljs-string">&quot;height&quot;</span>) ?
+        height = args_dict[<span class="hljs-string">&quot;height&quot;</span>] :
+        height = <span class="hljs-number">400</span>
+
+    haskey(args_dict, <span class="hljs-string">&quot;width&quot;</span>) ?
+        width = args_dict[<span class="hljs-string">&quot;width&quot;</span>] :
+        width = <span class="hljs-number">600</span>
+
+    haskey(args_dict, <span class="hljs-string">&quot;data&quot;</span>) ?
+        plot_data = args_dict[<span class="hljs-string">&quot;data&quot;</span>] :
+        plot_data = <span class="hljs-literal">nothing</span>
+
+    ggplot([], aes_dict,
+            AlgebraOfGraphics.data(Base.eval(Main, plot_data)),
+            (height = height, width = width))
 <span class="hljs-keyword">end</span></code></pre>
-<p>A couple of geom creation macros, which essentially build geom structs with the appropriate arguments:</p>
-<pre><code class="julia hljs"><span class="hljs-keyword">macro</span> geom_point(exprs...)
+<p>In a diagram, what&#39;s going on is this:</p>
+
+<figure>
+<pre>
+┌─────────┬────────────────────────────────────────┐
+│ @ggplot |(data = penguins, aes(color = species)) │
+└─────────┴────────────────────────────────────────┘
+     │                       │
+     │ defaults              │ extract_aes
+     │                       │
+     │   ┌─────────────────────────────────────────┐
+     └───| aes_dict: "color" => "species"          │
+         │ args_dict: "data" => "penguins"         │
+         │            "height" => 400              │
+         │            "width" => 600               │
+         └─────────────────────────────────────────┘
+                             │
+                             │ returns
+          ggplot object      │
+         ┌─────────────────────────────────────────┐
+         | geoms = []  # empty, currently          │
+         │ default_aes: "color" => "species"       │
+         │ plot_data: penguins                     │
+         │ axis: (height = 400, width = 600)       │
+         └─────────────────────────────────────────┘
+</pre>
+</figure>
+
+<p>The <code>extract_aes</code> function pulls the arguments into a dictionary, combines them with defaults as appropriate, and the <code>@ggplot</code> macro finally returns a <code>ggplot</code> object.</p>
+<p>Similar code creates <code>geom</code> objects:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">struct</span> geom
+    visual::<span class="hljs-built_in">Union</span>{<span class="hljs-built_in">Symbol</span>, <span class="hljs-built_in">Nothing</span>}
+    aes::<span class="hljs-built_in">Dict</span>
+    args::<span class="hljs-built_in">Dict</span>
+    analysis::<span class="hljs-built_in">Any</span>
+    required_aes::<span class="hljs-built_in">AbstractArray</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">macro</span> geom_point(exprs...)
     geom_visual = :Scatter
     aes_dict, args_dict = extract_aes(:($(exprs)))
     analysis = <span class="hljs-literal">nothing</span>
     required_aes = [<span class="hljs-string">&quot;x&quot;</span>, <span class="hljs-string">&quot;y&quot;</span>]
     <span class="hljs-keyword">return</span> geom(geom_visual, aes_dict, args_dict, <span class="hljs-literal">nothing</span>, required_aes)
-<span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span></code></pre>
 
-<span class="hljs-keyword">macro</span> geom_smooth(exprs...)
+<figure>
+<pre>
+┌─────────────┬──────────────────────────────────────────────┐
+│ @geom_point | (aes(x = bill_length_mm, y = bill_depth_mm)) │
+└─────────────┴──────────────────────────────────────────────┘
+     │                       │
+     │ defaults              │ extract_aes
+     │                       │
+     │    ┌─────────────────────────────────────────┐
+     │    | aes_dict: "x" => "bill_length_mm"       │
+     │    │           "y" => "bill_depth_mm"        │
+     │    └─────────────────────────────────────────┘
+     │                        │
+     │                        │ returns
+     │     geom_point_object  │
+     │    ┌─────────────────────────────────────────┐
+     │    | visual = :Scatter                       │
+     │    │ aes: "x" => "bill_length_mm"            │
+     │    │      "y" => "bill_depth_mm"             │
+     └─── │ args: Dict()                            │
+          │ analysis: nothing                       │
+          │ required_aes: ["x", "y"]                │
+          └─────────────────────────────────────────┘
+</pre>
+</figure>
+
+<pre><code class="julia hljs"><span class="hljs-keyword">macro</span> geom_smooth(exprs...)
     geom_visual = <span class="hljs-literal">nothing</span>
     aes_dict, args_dict = extract_aes(:($(exprs)))
     analysis = AlgebraOfGraphics.smooth
@@ -123,7 +192,77 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
     <span class="hljs-keyword">end</span>
     <span class="hljs-keyword">return</span> geom(geom_visual, aes_dict, args_dict, analysis, required_aes)
 <span class="hljs-keyword">end</span></code></pre>
-<p>A way to convert the geom objects into <code>AlgebraOfGraphics</code> Layer objects:</p>
+
+<figure>
+<pre>
+┌──────────────┬─────────────────────────────────────────────┐
+│ @geom_smooth | (aes(x = bill_length_mm, y = bill_depth_mm),│
+│              │ method = "lm")                              │
+└──────────────┴─────────────────────────────────────────────┘
+     │                       │
+     │ defaults              │ extract_aes
+     │                       │
+     │    ┌─────────────────────────────────────────┐
+     │    | aes_dict: "x" => "bill_length_mm"       │
+     │    │           "y" => "bill_depth_mm"        │
+     │    │ args_dict: "method" => "lm"             │
+     │    └─────────────────────────────────────────┘
+     │                        │
+     │                        │ returns
+     │     geom_smooth_object │
+     │    ┌─────────────────────────────────────────┐
+     │    | visual = nothing                        │
+     │    │ aes: "x" => "bill_length_mm"            │
+     │    │      "y" => "bill_depth_mm"             │
+     └─── │ args: "method" => "lm"                  │
+          │ analysis: AlgebraOfGraphics.linear      │
+          │ required_aes: ["x", "y"]                │
+          └─────────────────────────────────────────┘
+</pre>
+</figure>
+
+<p>The <code>extract_aes</code> function pulls the arguments into a dictionary, combines them with defaults as appropriate, and the <code>@geom_*</code> macro finally returns a <code>geom</code> object.</p>
+<p>With our objects created, we need a method to combine them. The following method to adds things to a <code>ggplot</code>, which essentially just adds any <code>geom</code> to an internal array inside the <code>ggplot</code>:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> Base.:+(x::ggplot, y...)::ggplot
+    result = ggplot(vcat(x.geoms, [i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> y]),
+        x.default_aes,
+        x.data,
+        x.axis)
+
+    <span class="hljs-keyword">return</span> result
+<span class="hljs-keyword">end</span></code></pre>
+<p>The result of our addition is something like this:</p>
+
+<figure>
+<pre>
+ggplot object
+┌──────────────────────────────────────┐
+| geoms =                              │
+│┌────────────────────────────────────┐│
+│| visual = nothing                   ││
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: "method" => "lm"             ││
+││ analysis: AlgebraOfGraphics.linear ││
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│┌────────────────────────────────────┐│
+│| visual = :Scatter                  ││
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: Dict()                       ││
+││ analysis: nothing                  ││
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│                                      │
+│ default_aes: "color" => "species"    │
+│ plot_data: penguins                  │
+│ axis: (height = 400, width = 600)    │
+└──────────────────────────────────────┘
+</pre>
+</figure>
+
+<p>In order to actually plot this object, I needed a way to convert the geom objects into <code>AlgebraOfGraphics</code> Layer objects:</p>
 <pre><code class="julia hljs"><span class="hljs-keyword">function</span> geom_to_layer(geom)
     mapping_args = (geom.aes[key] <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> geom.required_aes)
 
@@ -175,15 +314,108 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
         draw((+)(layers...); axis = plot.axis)
     <span class="hljs-keyword">end</span>
 <span class="hljs-keyword">end</span></code></pre>
-<p>These 100-or-so lines of julia were enough to get something like a minimal working example going:</p>
-<pre><code class="julia hljs">test_plot = <span class="hljs-meta">@ggplot</span>(data = penguins, aes(color = species)) +
-    <span class="hljs-meta">@geom_point</span>(aes(x = bill_length_mm, y = bill_depth_mm)) +
-    <span class="hljs-meta">@geom_smooth</span>(aes(x = bill_length_mm, y = bill_depth_mm),
-        method = <span class="hljs-string">&quot;lm&quot;</span>)
+<p>Algebra of Graphics plots need four parts: Visual, Analysis, Data, and Mapping. Each required part is extracted preferentially from the geom, and from the ggplot if it isn&#39;t present. Mapping is constructed by passing the &quot;required_aes&quot; in order as positional arguments, and non-required aes as keyword arguments.</p>
 
-draw_ggplot(test_plot)</code></pre>
-<p><img src="/assets/original_tidierplot.png" alt="" /></p>
-<p>At this point, I was convinced that this was going to be easy, and I pushed <a href="https://github.com/TidierOrg/TidierPlots.jl/tree/c1d97aee2758498806504e740a000bc84ff55d34">essentially this code</a> plus a PkgTemplates skeleton to a repo as version 0.1.0. How hard could this really be?</p>
+<figure>
+<pre>
+ggplot object
+┌──────────────────────────────────────┐
+| geoms =                              │
+│┌────────────────────────────────────┐│
+│| visual = nothing                   ││
+││ aes: "x" => "bill_length_mm" ──────┼┼─┬── mapping(:bill_length_mm,
+││      "y" => "bill_depth_mm"  ──────┼┼─┤           :bill_depth_mm;
+││ args: "method" => "lm"             ││ │           color = :species)
+││ analysis: AlgebraOfGraphics.linear ││ │
+││ required_aes: ["x", "y"]     ──────┼┼─┤
+│└────────────────────────────────────┘│ │
+│┌────────────────────────────────────┐│ │
+│| visual = :Scatter                  ││ │
+││ aes: "x" => "bill_length_mm"       ││ │
+││      "y" => "bill_depth_mm"        ││ │
+││ args: Dict()                       ││ │
+││ analysis: nothing                  ││ │
+││ required_aes: ["x", "y"]           ││ │
+│└────────────────────────────────────┘│ │
+│                                      │ │
+│ default_aes: "color" => "species" ───┼─┘
+│ plot_data: penguins                  │
+│ axis: (height = 400, width = 600)    │
+└──────────────────────────────────────┘
+</pre>
+</figure>
+
+<p>Data comes from the &quot;data&quot; value in the geom&#39;s arg dict if available &#40;it&#39;s not&#41;, and from plot_data in the ggplot otherwise:</p>
+
+<figure>
+<pre>
+ggplot object
+┌──────────────────────────────────────┐
+| geoms =                              │
+│┌────────────────────────────────────┐│
+│| visual = nothing                   ││
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: "method" => "lm"             ││
+││ analysis: AlgebraOfGraphics.linear ││
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│┌────────────────────────────────────┐│
+│| visual = :Scatter                  ││
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: Dict()                       ││
+││ analysis: nothing                  ││
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│                                      │
+│ default_aes: "color" => "species"    │
+│ plot_data: penguins ─────────────────┼─ data(penguins)
+│ axis: (height = 400, width = 600)    │
+└──────────────────────────────────────┘
+</pre>
+</figure>
+
+<p>Visual and Analysis always come from the geom:</p>
+
+<figure>
+<pre>
+ggplot object
+┌──────────────────────────────────────┐
+| geoms =                              │
+│┌────────────────────────────────────┐│
+│| visual = nothing ──────────────────┼┼─ no visual
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: "method" => "lm"             ││
+││ analysis: AlgebraOfGraphics.linear ┼┼─ linear()
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│┌────────────────────────────────────┐│
+│| visual = :Scatter ─────────────────┼┼─ visual(:Scatter)
+││ aes: "x" => "bill_length_mm"       ││
+││      "y" => "bill_depth_mm"        ││
+││ args: Dict()                       ││
+││ analysis: nothing ─────────────────┼┼─ no analysis
+││ required_aes: ["x", "y"]           ││
+│└────────────────────────────────────┘│
+│                                      │
+│ default_aes: "color" => "species"    │
+│ plot_data: penguins                  │
+│ axis: (height = 400, width = 600)    │
+└──────────────────────────────────────┘
+</pre>
+</figure>
+
+<p>So this all translates to the AoG code:</p>
+<pre><code class="julia hljs">data(penguins) *
+  visual(:Scatter) *
+  mapping(:bill_length_mm, :bill_depth_mm; color = :species) +
+data(penguins) *
+  linear() *
+  mapping(:bill_length_mm, :bill_depth_mm; color = :species) |&gt;
+  draw(axis = (height = <span class="hljs-number">400</span>, width = <span class="hljs-number">600</span>))</code></pre>
+<p>Which produces the plot&#33; At this point, I was convinced that this was going to be easy, and I pushed <a href="https://github.com/TidierOrg/TidierPlots.jl/tree/c1d97aee2758498806504e740a000bc84ff55d34">essentially this code</a> plus a PkgTemplates skeleton to a repo as version 0.1.0. How hard could this really be?</p>
 <hr />
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
