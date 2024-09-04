@@ -197,8 +197,8 @@ table {
     :root {
         --text-color: #fff;
         --text-color-alt: #aaa;
-        --background-color: #000;
-        --background-color-alt: #111;
+        --background-color: #1a1b26;
+        --background-color-alt: #1a1b26;
     }
 }
 
@@ -323,9 +323,41 @@ table {
     margin: 0 0 calc(var(--line-height) * 2);
 }
 
-th,
 td {
-    border: var(--border-thickness) solid var(--text-color);
+    padding: calc((var(--line-height) / 2))
+        calc(1ch - var(--border-thickness) / 2)
+        calc((var(--line-height) / 2) - (var(--border-thickness)));
+    line-height: var(--line-height);
+    vertical-align: top;
+    text-align: left;
+}
+
+th[scope="col"] {
+    font-weight: 700;
+    border-bottom: var(--border-thickness) solid var(--text-color);
+    padding: calc((var(--line-height) / 2))
+        calc(1ch - var(--border-thickness) / 2)
+        calc((var(--line-height) / 2) - (var(--border-thickness)));
+    line-height: var(--line-height);
+    vertical-align: top;
+    text-align: left;
+}
+
+th[scope="corner"] {
+    font-weight: 700;
+    border-right: var(--border-thickness) solid var(--text-color);
+    border-bottom: var(--border-thickness) solid var(--text-color);
+    padding: calc((var(--line-height) / 2))
+        calc(1ch - var(--border-thickness) / 2)
+        calc((var(--line-height) / 2) - (var(--border-thickness)));
+    line-height: var(--line-height);
+    vertical-align: top;
+    text-align: left;
+}
+
+th[scope="row"] {
+    font-weight: 700;
+    border-right: var(--border-thickness) solid var(--text-color);
     padding: calc((var(--line-height) / 2))
         calc(1ch - var(--border-thickness) / 2)
         calc((var(--line-height) / 2) - (var(--border-thickness)));
@@ -336,10 +368,6 @@ td {
 
 table tbody tr:first-child > * {
     padding-top: calc((var(--line-height) / 2) - var(--border-thickness));
-}
-
-th {
-    font-weight: 700;
 }
 
 .width-min {
