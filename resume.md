@@ -7,11 +7,9 @@ rss = "Current list of experience and education."
 tags = ["syntax", "code"]
 +++
 
----
-
 ~~~
 <span style="color:#70C66B;">julia></span>
-print(Resume)
+<span style="color:#5BC5E2;">print</span>(Resume)
 ~~~
 
 **GroupedDataFrame with 2 groups based on key: type**

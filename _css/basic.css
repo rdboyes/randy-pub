@@ -1,177 +1,5 @@
 @import url("https://fonts.cdnfonts.com/css/jetbrains-mono-2");
 
-/* ==================================================================
-    Header and Nav
-================================================================== */
-
-nav {
-    width: 100%;
-    display: inline-block;
-    text-align: center;
-}
-
-nav ul {
-    padding-left: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-nav li {
-    display: inline-block;
-}
-
-nav li a {
-    color: #004de6;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: bold;
-    display: inline-block;
-    float: center;
-    padding-top: 10px;
-    padding-right: 2px;
-    padding-left: 2px;
-    padding-bottom: 5px;
-    margin-left: 7px;
-    margin-right: 7px;
-    margin-bottom: 7px;
-    border-bottom: 2px solid white;
-    transition: color 0.3s ease;
-}
-
-header li a:hover {
-    color: orange;
-    border-bottom: 2px solid black;
-}
-
-#menu-icon {
-    display: none;
-}
-
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
-    /*margin: 0;*/
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
-    display: block;
-}
-body {
-    line-height: 1;
-}
-ol,
-ul {
-    list-style: none;
-}
-blockquote,
-q {
-    quotes: none;
-}
-blockquote:before,
-blockquote:after,
-q:before,
-q:after {
-    content: "";
-    content: none;
-}
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
 :root {
     --font-family: "JetBrains Mono", monospace;
     --line-height: 1.2rem;
@@ -324,6 +152,16 @@ table {
 }
 
 td {
+    padding: calc((var(--line-height) / 2))
+        calc(1ch - var(--border-thickness) / 2)
+        calc((var(--line-height) / 2) - (var(--border-thickness)));
+    line-height: var(--line-height);
+    vertical-align: top;
+    text-align: left;
+}
+
+td[scope="header"] {
+    border: var(--border-thickness) solid var(--text-color);
     padding: calc((var(--line-height) / 2))
         calc(1ch - var(--border-thickness) / 2)
         calc((var(--line-height) / 2) - (var(--border-thickness)));

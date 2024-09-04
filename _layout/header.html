@@ -1,11 +1,25 @@
-<header>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/pubs/">Publications</a></li>
-            <li><a href="/resume/">Resume</a></li>
-            <li><a href="/posts/">Posts</a></li>
-        </ul>
-        <img src="/assets/hamburger.svg" id="menu-icon" />
-    </nav>
-</header>
+<table class="header">
+    <tr>
+        <td colspan="2" rowspan="3" scope="header">
+            <h1 class="title">randy.pub</h1>
+            <span class="subtitle">Personal homepage</span>
+        </td>
+        <td scope="header" class="width-min">Author</td>
+        <td scope="header">Randy Boyes</td>
+    </tr>
+    <tr>
+        <td scope="header">Updated</td>
+        <td scope="header">
+            <time> {{ fill fd_mtime }}</time>
+        </td>
+    </tr>
+    <tr>
+        <td scope="header">Nav</td>
+        <td colspan="4" rowspan="1" scope="header">
+            <a href="/">Home</a>
+            <a href="/pubs/">Publications</a>
+            <a href="/resume/">Resume</a>
+            <a href="/posts/">Posts</a>
+        </td>
+    </tr>
+</table>

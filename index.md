@@ -1,15 +1,13 @@
----
-
 ~~~
 <span style="color:#70C66B;">julia></span>
-print(Intro)
+<span style="color:#5BC5E2;">print</span>(Intro)
 ~~~
 
 I (Randy) am currently working as the Director of Analytics at [Presage Group Inc.](https://presagegroup.com/). I completed my Ph.D. in Epidemiology at Queen's University in 2023.
 
 ~~~
 <span style="color:#70C66B;">julia></span>
-print(Socials)
+<span style="color:#5BC5E2;">print</span>(Socials)
 ~~~
 
 **4x2 DataFrame**
@@ -50,7 +48,7 @@ print(Socials)
 
 ~~~
 <span style="color:#70C66B;">julia></span>
-print(Recent)
+<span style="color:#5BC5E2;">print</span>(Recent)
 ~~~
 
 Dict{Date, String} with 2 entrys:

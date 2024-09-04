@@ -5,10 +5,9 @@ date = Date(2019, 3, 22)
 rss = "A list of working papers and publications."
 +++
 
----
 ~~~
 <span style="color:#70C66B;">julia></span>
-print(Publications)
+<span style="color:#5BC5E2;">print</span>(Publications)
 ~~~
 
 **GroupedDataFrame with 3 groups based on key: type**
