@@ -1,3 +1,5 @@
+@import url("https://fonts.cdnfonts.com/css/jetbrains-mono-2");
+
 /* ==================================================================
     Header and Nav
 ================================================================== */
@@ -169,8 +171,6 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-
-@import url("https://fonts.cdnfonts.com/css/jetbrains-mono-2");
 
 :root {
     --font-family: "JetBrains Mono", monospace;
