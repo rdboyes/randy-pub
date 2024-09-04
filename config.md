@@ -22,6 +22,8 @@ website_descr = "Personal homepage for Randy Boyes"
 website_url   = "http://www.randy.pub"
 +++
 
+@def title = "randy.pub"
+
 <!--
 Add here global latex commands to use throughout your pages.
 -->
