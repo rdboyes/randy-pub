@@ -135,7 +135,6 @@ em {
 
 sub {
     position: relative;
-    display: inline-block;
     margin: 0;
     vertical-align: sub;
     line-height: 0;
