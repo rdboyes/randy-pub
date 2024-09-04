@@ -19,7 +19,7 @@ rss = "A list of working papers and publications."
 <thead>
   <tr>
     <th class="width-min" scope = "corner">Row</th>
-    <th class="width-min" scope = "col">Language<br><span style="color:#444B6A;">String</span></th>
+    <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
     <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
     <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
     <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
@@ -51,7 +51,7 @@ rss = "A list of working papers and publications."
 <thead>
   <tr>
   <th class="width-min" scope = "corner">Row</th>
-  <th class="width-min" scope = "col">Language<br><span style="color:#444B6A;">String</span></th>
+  <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
   <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
   <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
   <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
@@ -83,7 +83,7 @@ rss = "A list of working papers and publications."
 <thead>
   <tr>
   <th class="width-min" scope = "corner">Row</th>
-  <th class="width-min" scope = "col">Language<br><span style="color:#444B6A;">String</span></th>
+  <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
   <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
   <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
   <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
