@@ -1,120 +1,200 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8  /> <meta name=viewport  content="width=device-width, initial-scale=1" /> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/reset.css" /> <link rel=stylesheet  href="/css/normalize.css" /> <link rel=stylesheet  href="/css/basic.css" /> <link rel=icon  href="/assets/favicon.png" /> <title>Developing TidierPlots.jl, Part 1</title> <table class=header > <tr> <td colspan=2  rowspan=3  scope=header > <h1 class=title >randy.pub</h1> <span class=subtitle >Personal homepage</span> <td scope=header  class=width-min >Author <td scope=header >Randy Boyes <tr> <td scope=header >Updated <td scope=header > <time> September 04, 2024</time> <tr> <td scope=header >Nav <td colspan=4  rowspan=1  scope=header > <a href="/">Home</a> <a href="/pubs/">Publications</a> <a href="/resume/">Resume</a> <a href="/posts/">Posts</a> </table> <div class=franklin-content ><hr /> <h2 id=making_tidierplotsjl ><a href="#making_tidierplotsjl" class=header-anchor >Making TidierPlots.jl</a></h2> <p>If you&#39;re unfamiliar, <a href="https://github.com/TidierOrg/TidierPlots.jl">TidierPlots</a> is my attempt to build a more modern-feeling, 100&#37; julia version of the popular R data visualization package <a href="https://ggplot2.tidyverse.org/">ggplot2</a>. This is my first julia package, and I have already made quite a few mistakes in developing it. This series of posts will walk through my experience of transforming a script into a package, the problems I&#39;ve had, and the solutions I&#39;ve come up with so far.</p> <h2 id=version_1 ><a href="#version_1" class=header-anchor >Version 1</a></h2> <p>To start, I want to show you the basic idea of the package, as it existed when I first wrote out the original script. I had two structs:</p> <pre><code class="julia hljs"><span class=hljs-keyword >using</span> Makie, CairoMakie, AlgebraOfGraphics
-<span class=hljs-keyword >using</span> PalmerPenguins, DataFrames
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+         
+        <link rel="stylesheet" href="/libs/highlight/styles/github.min.css">
+ 
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/normalize.css" />
+        <link rel="stylesheet" href="/css/basic.css" />
+        <link rel="icon" href="/assets/favicon.png" />
+        
+        <title>Developing TidierPlots.jl, Part 1</title>
+        
+    </head>
+    <body>
+        <table class="header">
+    <tr>
+        <td colspan="2" rowspan="3" scope="header">
+            <h1 class="title">randy.pub</h1>
+            <span class="subtitle">Personal homepage</span>
+        </td>
+        <td scope="header" class="width-min">Author</td>
+        <td scope="header">Randy Boyes</td>
+    </tr>
+    <tr>
+        <td scope="header">Updated</td>
+        <td scope="header">
+            <time> September 04, 2024</time>
+        </td>
+    </tr>
+    <tr>
+        <td scope="header">Nav</td>
+        <td colspan="4" rowspan="1" scope="header">
+            <a href="/">Home</a>
+            <a href="/pubs/">Publications</a>
+            <a href="/resume/">Resume</a>
+            <a href="/posts/">Posts</a>
+        </td>
+    </tr>
+</table>
+
+
+        <!-- Content appended here -->
+    </body>
+</html>
+<div class="franklin-content"><hr />
+<h2 id="making_tidierplotsjl"><a href="#making_tidierplotsjl" class="header-anchor">Making TidierPlots.jl</a></h2>
+<p>If you&#39;re unfamiliar, <a href="https://github.com/TidierOrg/TidierPlots.jl">TidierPlots</a> is my attempt to build a more modern-feeling, 100&#37; julia version of the popular R data visualization package <a href="https://ggplot2.tidyverse.org/">ggplot2</a>. This is my first julia package, and I have already made quite a few mistakes in developing it. This series of posts will walk through my experience of transforming a script into a package, the problems I&#39;ve had, and the solutions I&#39;ve come up with so far.</p>
+<h2 id="version_1"><a href="#version_1" class="header-anchor">Version 1</a></h2>
+<p>To start, I want to show you the basic idea of the package, as it existed when I first wrote out the original script. I had two structs:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">using</span> Makie, CairoMakie, AlgebraOfGraphics
+<span class="hljs-keyword">using</span> PalmerPenguins, DataFrames
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
-<span class=hljs-keyword >struct</span> geom
-    visual::<span class=hljs-built_in >Union</span>{<span class=hljs-built_in >Symbol</span>, <span class=hljs-built_in >Nothing</span>}
-    aes::<span class=hljs-built_in >Dict</span>
-    args::<span class=hljs-built_in >Dict</span>
-    analysis::<span class=hljs-built_in >Any</span>
-    required_aes::<span class=hljs-built_in >AbstractArray</span>
-<span class=hljs-keyword >end</span>
+<span class="hljs-keyword">struct</span> geom
+    visual::<span class="hljs-built_in">Union</span>{<span class="hljs-built_in">Symbol</span>, <span class="hljs-built_in">Nothing</span>}
+    aes::<span class="hljs-built_in">Dict</span>
+    args::<span class="hljs-built_in">Dict</span>
+    analysis::<span class="hljs-built_in">Any</span>
+    required_aes::<span class="hljs-built_in">AbstractArray</span>
+<span class="hljs-keyword">end</span>
 
-<span class=hljs-keyword >struct</span> ggplot
-    geoms::<span class=hljs-built_in >AbstractArray</span>
-    default_aes::<span class=hljs-built_in >Dict</span>
-    data::<span class=hljs-built_in >Symbol</span>
-    axis::<span class=hljs-built_in >NamedTuple</span>
-<span class=hljs-keyword >end</span></code></pre> <p>A method to add things to a <code>ggplot</code>, which essentially just adds any <code>geom</code> to an internal array inside the <code>ggplot</code>:</p> <pre><code class="julia hljs"><span class=hljs-keyword >function</span> Base.:+(x::ggplot, y...)::ggplot
-    result = ggplot(vcat(x.geoms, [i <span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> y]),
+<span class="hljs-keyword">struct</span> ggplot
+    geoms::<span class="hljs-built_in">AbstractArray</span>
+    default_aes::<span class="hljs-built_in">Dict</span>
+    data::<span class="hljs-built_in">Symbol</span>
+    axis::<span class="hljs-built_in">NamedTuple</span>
+<span class="hljs-keyword">end</span></code></pre>
+<p>A method to add things to a <code>ggplot</code>, which essentially just adds any <code>geom</code> to an internal array inside the <code>ggplot</code>:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> Base.:+(x::ggplot, y...)::ggplot
+    result = ggplot(vcat(x.geoms, [i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> y]),
         x.default_aes,
         x.data,
         x.axis)
 
-    <span class=hljs-keyword >return</span> result
-<span class=hljs-keyword >end</span></code></pre> <p>A function to turn arguments passed to a geom into two dictionaries, one for things inside <code>aes</code> and one for things outside of it:</p> <pre><code class="julia hljs"><span class=hljs-keyword >function</span> extract_aes(geom)
-    aes_dict = <span class=hljs-built_in >Dict</span>{<span class=hljs-built_in >String</span>, <span class=hljs-built_in >Symbol</span>}()
-    args_dict = <span class=hljs-built_in >Dict</span>{<span class=hljs-built_in >String</span>, <span class=hljs-built_in >Any</span>}()
+    <span class="hljs-keyword">return</span> result
+<span class="hljs-keyword">end</span></code></pre>
+<p>A function to turn arguments passed to a geom into two dictionaries, one for things inside <code>aes</code> and one for things outside of it:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> extract_aes(geom)
+    aes_dict = <span class="hljs-built_in">Dict</span>{<span class="hljs-built_in">String</span>, <span class="hljs-built_in">Symbol</span>}()
+    args_dict = <span class="hljs-built_in">Dict</span>{<span class="hljs-built_in">String</span>, <span class="hljs-built_in">Any</span>}()
 
-    <span class=hljs-keyword >for</span> section <span class=hljs-keyword >in</span> geom
-        <span class=hljs-keyword >if</span> section <span class=hljs-keyword >isa</span> <span class=hljs-built_in >Expr</span>
-            <span class=hljs-comment ># if the section is an expression</span>
-            <span class=hljs-comment ># check if it is a aes function call</span>
-            <span class=hljs-keyword >if</span> section.args[<span class=hljs-number >1</span>] == :aes
-                <span class=hljs-keyword >for</span> aes_ex <span class=hljs-keyword >in</span> section.args
-                    <span class=hljs-keyword >if</span> aes_ex <span class=hljs-keyword >isa</span> <span class=hljs-built_in >Expr</span>
-                        aes_dict[<span class=hljs-built_in >String</span>(aes_ex.args[<span class=hljs-number >1</span>])] = aes_ex.args[<span class=hljs-number >2</span>]
-                    <span class=hljs-keyword >end</span>
-                <span class=hljs-keyword >end</span>
-            <span class=hljs-comment ># if not, its a generic argument</span>
-            <span class=hljs-keyword >else</span>
-                args_dict[<span class=hljs-built_in >String</span>(section.args[<span class=hljs-number >1</span>])] = section.args[<span class=hljs-number >2</span>]
-            <span class=hljs-keyword >end</span>
-        <span class=hljs-keyword >end</span>
-    <span class=hljs-keyword >end</span>
+    <span class="hljs-keyword">for</span> section <span class="hljs-keyword">in</span> geom
+        <span class="hljs-keyword">if</span> section <span class="hljs-keyword">isa</span> <span class="hljs-built_in">Expr</span>
+            <span class="hljs-comment"># if the section is an expression</span>
+            <span class="hljs-comment"># check if it is a aes function call</span>
+            <span class="hljs-keyword">if</span> section.args[<span class="hljs-number">1</span>] == :aes
+                <span class="hljs-keyword">for</span> aes_ex <span class="hljs-keyword">in</span> section.args
+                    <span class="hljs-keyword">if</span> aes_ex <span class="hljs-keyword">isa</span> <span class="hljs-built_in">Expr</span>
+                        aes_dict[<span class="hljs-built_in">String</span>(aes_ex.args[<span class="hljs-number">1</span>])] = aes_ex.args[<span class="hljs-number">2</span>]
+                    <span class="hljs-keyword">end</span>
+                <span class="hljs-keyword">end</span>
+            <span class="hljs-comment"># if not, its a generic argument</span>
+            <span class="hljs-keyword">else</span>
+                args_dict[<span class="hljs-built_in">String</span>(section.args[<span class="hljs-number">1</span>])] = section.args[<span class="hljs-number">2</span>]
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
 
-    <span class=hljs-keyword >return</span> (aes_dict, args_dict)
-<span class=hljs-keyword >end</span></code></pre> <p>A couple of geom creation macros, which essentially build geom structs with the appropriate arguments:</p> <pre><code class="julia hljs"><span class=hljs-keyword >macro</span> geom_point(exprs...)
+    <span class="hljs-keyword">return</span> (aes_dict, args_dict)
+<span class="hljs-keyword">end</span></code></pre>
+<p>A couple of geom creation macros, which essentially build geom structs with the appropriate arguments:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">macro</span> geom_point(exprs...)
     geom_visual = :Scatter
     aes_dict, args_dict = extract_aes(:($(exprs)))
-    analysis = <span class=hljs-literal >nothing</span>
-    required_aes = [<span class=hljs-string >&quot;x&quot;</span>, <span class=hljs-string >&quot;y&quot;</span>]
-    <span class=hljs-keyword >return</span> geom(geom_visual, aes_dict, args_dict, <span class=hljs-literal >nothing</span>, required_aes)
-<span class=hljs-keyword >end</span>
+    analysis = <span class="hljs-literal">nothing</span>
+    required_aes = [<span class="hljs-string">&quot;x&quot;</span>, <span class="hljs-string">&quot;y&quot;</span>]
+    <span class="hljs-keyword">return</span> geom(geom_visual, aes_dict, args_dict, <span class="hljs-literal">nothing</span>, required_aes)
+<span class="hljs-keyword">end</span>
 
-<span class=hljs-keyword >macro</span> geom_smooth(exprs...)
-    geom_visual = <span class=hljs-literal >nothing</span>
+<span class="hljs-keyword">macro</span> geom_smooth(exprs...)
+    geom_visual = <span class="hljs-literal">nothing</span>
     aes_dict, args_dict = extract_aes(:($(exprs)))
     analysis = AlgebraOfGraphics.smooth
-    required_aes = [<span class=hljs-string >&quot;x&quot;</span>, <span class=hljs-string >&quot;y&quot;</span>]
-    <span class=hljs-keyword >if</span> haskey(args_dict, <span class=hljs-string >&quot;method&quot;</span>)
-        <span class=hljs-keyword >if</span> args_dict[<span class=hljs-string >&quot;method&quot;</span>] == <span class=hljs-string >&quot;lm&quot;</span>
+    required_aes = [<span class="hljs-string">&quot;x&quot;</span>, <span class="hljs-string">&quot;y&quot;</span>]
+    <span class="hljs-keyword">if</span> haskey(args_dict, <span class="hljs-string">&quot;method&quot;</span>)
+        <span class="hljs-keyword">if</span> args_dict[<span class="hljs-string">&quot;method&quot;</span>] == <span class="hljs-string">&quot;lm&quot;</span>
             analysis = AlgebraOfGraphics.linear
-        <span class=hljs-keyword >end</span>
-    <span class=hljs-keyword >end</span>
-    <span class=hljs-keyword >return</span> geom(geom_visual, aes_dict, args_dict, analysis, required_aes)
-<span class=hljs-keyword >end</span></code></pre> <p>A way to convert the geom objects into <code>AlgebraOfGraphics</code> Layer objects:</p> <pre><code class="julia hljs"><span class=hljs-keyword >function</span> geom_to_layer(geom)
-    mapping_args = (geom.aes[key] <span class=hljs-keyword >for</span> key <span class=hljs-keyword >in</span> geom.required_aes)
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> geom(geom_visual, aes_dict, args_dict, analysis, required_aes)
+<span class="hljs-keyword">end</span></code></pre>
+<p>A way to convert the geom objects into <code>AlgebraOfGraphics</code> Layer objects:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> geom_to_layer(geom)
+    mapping_args = (geom.aes[key] <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> geom.required_aes)
 
-    layer = data(eval(geom.args[<span class=hljs-string >&quot;data&quot;</span>])) *
+    layer = data(eval(geom.args[<span class="hljs-string">&quot;data&quot;</span>])) *
         mapping(mapping_args...)
 
-    <span class=hljs-keyword >if</span> !isnothing(geom.analysis)
+    <span class="hljs-keyword">if</span> !isnothing(geom.analysis)
         layer = layer * (geom.analysis)()
-    <span class=hljs-keyword >end</span>
+    <span class="hljs-keyword">end</span>
 
-    <span class=hljs-keyword >if</span> !isnothing(geom.visual)
+    <span class="hljs-keyword">if</span> !isnothing(geom.visual)
         layer = layer * visual(eval(geom.visual))
-    <span class=hljs-keyword >end</span>
+    <span class="hljs-keyword">end</span>
 
-    <span class=hljs-keyword >if</span> haskey(geom.aes, <span class=hljs-string >&quot;color&quot;</span>)
-        layer = layer * mapping(color = geom.aes[<span class=hljs-string >&quot;color&quot;</span>])
-    <span class=hljs-keyword >end</span>
+    <span class="hljs-keyword">if</span> haskey(geom.aes, <span class="hljs-string">&quot;color&quot;</span>)
+        layer = layer * mapping(color = geom.aes[<span class="hljs-string">&quot;color&quot;</span>])
+    <span class="hljs-keyword">end</span>
 
-    <span class=hljs-keyword >return</span> layer
-<span class=hljs-keyword >end</span></code></pre> <p>And finally, some basic inheritance rules to make it work the way ggplot does:</p> <pre><code class="julia hljs"><span class=hljs-keyword >function</span> draw_ggplot(plot::ggplot)
-    <span class=hljs-keyword >for</span> geom <span class=hljs-keyword >in</span> plot.geoms
-        <span class=hljs-comment ># if data is not specified at the geom level</span>
-        <span class=hljs-comment >#  use the ggplot default</span>
-        <span class=hljs-keyword >if</span> !haskey(geom.args, <span class=hljs-string >&quot;data&quot;</span>)
-            geom.args[<span class=hljs-string >&quot;data&quot;</span>] = plot.data
-        <span class=hljs-keyword >end</span>
+    <span class="hljs-keyword">return</span> layer
+<span class="hljs-keyword">end</span></code></pre>
+<p>And finally, some basic inheritance rules to make it work the way ggplot does:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> draw_ggplot(plot::ggplot)
+    <span class="hljs-keyword">for</span> geom <span class="hljs-keyword">in</span> plot.geoms
+        <span class="hljs-comment"># if data is not specified at the geom level</span>
+        <span class="hljs-comment">#  use the ggplot default</span>
+        <span class="hljs-keyword">if</span> !haskey(geom.args, <span class="hljs-string">&quot;data&quot;</span>)
+            geom.args[<span class="hljs-string">&quot;data&quot;</span>] = plot.data
+        <span class="hljs-keyword">end</span>
 
-        <span class=hljs-comment ># if an aes isn&#x27;t given in the geom, use the ggplot aes</span>
-        <span class=hljs-keyword >for</span> aes <span class=hljs-keyword >in</span> keys(plot.default_aes)
-            <span class=hljs-keyword >if</span> !haskey(geom.aes, aes)
+        <span class="hljs-comment"># if an aes isn&#x27;t given in the geom, use the ggplot aes</span>
+        <span class="hljs-keyword">for</span> aes <span class="hljs-keyword">in</span> keys(plot.default_aes)
+            <span class="hljs-keyword">if</span> !haskey(geom.aes, aes)
                 geom.aes[aes] = plot.default_aes[aes]
-            <span class=hljs-keyword >end</span>
-        <span class=hljs-keyword >end</span>
-    <span class=hljs-keyword >end</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
 
     layers = []
 
-    <span class=hljs-keyword >for</span> geom <span class=hljs-keyword >in</span> plot.geoms
+    <span class="hljs-keyword">for</span> geom <span class="hljs-keyword">in</span> plot.geoms
         push!(layers, geom_to_layer(geom))
-    <span class=hljs-keyword >end</span>
+    <span class="hljs-keyword">end</span>
 
-    <span class=hljs-keyword >if</span> length(layers) == <span class=hljs-number >0</span>
-        error(<span class=hljs-string >&quot;No geoms supplied&quot;</span>)
-    <span class=hljs-keyword >elseif</span> length(layers) == <span class=hljs-number >1</span>
-        draw(layers[<span class=hljs-number >1</span>]; axis = plot.axis)
-    <span class=hljs-keyword >else</span>
+    <span class="hljs-keyword">if</span> length(layers) == <span class="hljs-number">0</span>
+        error(<span class="hljs-string">&quot;No geoms supplied&quot;</span>)
+    <span class="hljs-keyword">elseif</span> length(layers) == <span class="hljs-number">1</span>
+        draw(layers[<span class="hljs-number">1</span>]; axis = plot.axis)
+    <span class="hljs-keyword">else</span>
         draw((+)(layers...); axis = plot.axis)
-    <span class=hljs-keyword >end</span>
-<span class=hljs-keyword >end</span></code></pre> <p>These 100-or-so lines of julia were enough to get something like a minimal working example going:</p> <pre><code class="julia hljs">test_plot = <span class=hljs-meta >@ggplot</span>(data = penguins, aes(color = species)) +
-    <span class=hljs-meta >@geom_point</span>(aes(x = bill_length_mm, y = bill_depth_mm)) +
-    <span class=hljs-meta >@geom_smooth</span>(aes(x = bill_length_mm, y = bill_depth_mm),
-        method = <span class=hljs-string >&quot;lm&quot;</span>)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span></code></pre>
+<p>These 100-or-so lines of julia were enough to get something like a minimal working example going:</p>
+<pre><code class="julia hljs">test_plot = <span class="hljs-meta">@ggplot</span>(data = penguins, aes(color = species)) +
+    <span class="hljs-meta">@geom_point</span>(aes(x = bill_length_mm, y = bill_depth_mm)) +
+    <span class="hljs-meta">@geom_smooth</span>(aes(x = bill_length_mm, y = bill_depth_mm),
+        method = <span class="hljs-string">&quot;lm&quot;</span>)
 
-draw_ggplot(test_plot)</code></pre> <p><img src="/assets/original_tidierplot.png" alt="" /></p> <p>At this point, I was convinced that this was going to be easy, and I pushed <a href="https://github.com/TidierOrg/TidierPlots.jl/tree/c1d97aee2758498806504e740a000bc84ff55d34">essentially this code</a> plus a PkgTemplates skeleton to a repo as version 0.1.0. How hard could this really be?</p> <hr /> <div class=page-foot > <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Randy Boyes. Last modified: September 04, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> <script src="/libs/highlight/highlight.min.js"></script> <script>hljs.highlightAll();hljs.configure({tabReplace: ' '});</script>
+draw_ggplot(test_plot)</code></pre>
+<p><img src="/assets/original_tidierplot.png" alt="" /></p>
+<p>At this point, I was convinced that this was going to be easy, and I pushed <a href="https://github.com/TidierOrg/TidierPlots.jl/tree/c1d97aee2758498806504e740a000bc84ff55d34">essentially this code</a> plus a PkgTemplates skeleton to a repo as version 0.1.0. How hard could this really be?</p>
+<hr />
+<div class="page-foot">
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Randy Boyes. Last modified: September 04, 2024.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>
