@@ -1,8 +1,8 @@
-@def title = "Developing TidierPlots.jl, Part 1"
-@def date = "09/02/2024"
+@def title = "TidierPlots.jl: From Script to Package, Part 1"
+@def date = "09/05/2024"
 @def tags = ["julia", "TidierPlots.jl"]
 
-@def rss_pubdate = Date(2024, 09, 02)
+@def rss_pubdate = Date(2024, 09, 05)
 
 ---
 
