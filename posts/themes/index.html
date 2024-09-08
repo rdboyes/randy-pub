@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+         
+        <link rel="stylesheet" href="/libs/highlight/styles/github.min.css">
+ 
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/normalize.css" />
+        <link rel="stylesheet" href="/css/basic.css" />
+        <link rel="icon" href="/assets/favicon.png" />
+        
+        <title>Basics of Making Makie Themes for TidierPlots</title>
+        
+    </head>
+    <body>
+        <table class="header">
+    <tr>
+        <td colspan="2" rowspan="3" scope="header">
+            <h1 class="title">randy.pub</h1>
+            <span class="subtitle">Personal homepage</span>
+        </td>
+        <td scope="header" class="width-min">Author</td>
+        <td scope="header">Randy Boyes</td>
+    </tr>
+    <tr>
+        <td scope="header">Updated</td>
+        <td scope="header">
+            <time> September 08, 2024</time>
+        </td>
+    </tr>
+    <tr>
+        <td scope="header">Nav</td>
+        <td colspan="4" rowspan="1" scope="header">
+            <a href="/">Home</a>
+            <a href="/pubs/">Publications</a>
+            <a href="/resume/">Resume</a>
+            <a href="/posts/">Posts</a>
+        </td>
+    </tr>
+</table>
+
+
+        <!-- Content appended here -->
+    </body>
+</html>
+<div class="franklin-content"><h2 id="themes"><a href="#themes" class="header-anchor">Themes</a></h2>
+<p>TidierPlots.jl has full support for Makie themes. For example:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">using</span> TidierPlots
+<span class="hljs-keyword">using</span> Random
+<span class="hljs-keyword">using</span> DataFrames
+
+Random.seed!(<span class="hljs-number">123</span>)
+n = <span class="hljs-number">200</span>
+df = DataFrame(x = randn(n) / <span class="hljs-number">2</span>, y = randn(n))
+
+plot1 = ggplot(df) +
+    geom_histogram(aes(x = :x),
+      color = (:orangered, <span class="hljs-number">0.5</span>),
+      strokewidth = <span class="hljs-number">0.5</span>) +
+    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + theme_minimal() <span class="hljs-comment"># theme_minimal is from Makie</span></code></pre>
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot1' not found. //</span></p>
+<p>Lets make this plot fit a little better with the monospace theme we&#39;ve got going on this site. First - the most obvious change. We need to change the font.</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">using</span> Makie
+
+randy_pub_theme = Theme(
+  fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>)
+)
+
+plot2 = ggplot(df) +
+    geom_histogram(aes(x = :x),
+      color = (:orangered, <span class="hljs-number">0.5</span>),
+      strokewidth = <span class="hljs-number">0.5</span>) +
+    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme</code></pre>
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot2' not found. //</span></p>
+<p>The syntax looks a little funny if you&#39;re coming from R, so it&#39;s worth a little detour to talk about which elements can be used in themes, and how to pass them in. Makie themes can contain settings for the Attributes of any object. To change the font, we want to edit the <a href="https://docs.makie.org/stable/reference/plots/text#fonts">&quot;fonts&quot; Attribute</a> of the Figure which says it needs a &quot;dictionary&quot; that ties font styles &#40;e.g. &quot;regular&quot;&#41; to fonts &#40;&quot;JetBrains Mono&quot;&#41;. I honestly don&#39;t know why it says it wants a dictionary and then demands a named tuple instead, but that&#39;s the way it works. For more info, see the explanation <a href="https://docs.makie.org/stable/explanations/fonts">here</a>.</p>
+<p>Edits to the overall figure are done directly within the Theme call, while changes to <a href="https://docs.makie.org/stable/explanations/blocks">&quot;Blocks&quot;</a> are done within a &quot;UppercaseBlockName &#61; &#40;tuple of Attributes&#41;&quot; argument to Theme. We&#39;re going to need to change a lot of options for Axis &#40;whose Attributes are listed <a href="https://docs.makie.org/stable/reference/blocks/axis#attributes">here</a> in order to make this theme look right. Lets start by getting rid of the background and all of the axis lines except the bottom.</p>
+<pre><code class="julia hljs">randy_pub_theme = Theme(
+    fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>),
+    backgroundcolor = :transparent,
+    Axis = (
+            backgroundcolor = :transparent,
+            leftspinevisible = <span class="hljs-literal">false</span>,
+            rightspinevisible = <span class="hljs-literal">false</span>,
+            topspinevisible = <span class="hljs-literal">false</span>,
+            xgridcolor = :transparent,
+            ygridcolor = :transparent,
+        )
+)
+
+plot3 = ggplot(df) +
+    geom_histogram(aes(x = :x),
+      color = (:transparent, <span class="hljs-number">0.5</span>), strokewidth = <span class="hljs-number">1</span>) +
+    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme</code></pre>
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot3' not found. //</span></p>
+<p>Notice that there are two different calls to &quot;background &#61; :transparent&quot;. The one inside the Axis group makes the Axis background transparent, and the one at the base level makes the figure&#39;s background transparent.</p>
+<p>We need to tweak the colors now for dark mode:</p>
+<pre><code class="julia hljs">randy_pub_theme_dark = Theme(
+    fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>),
+    backgroundcolor = :transparent,
+    Axis = (
+            backgroundcolor = :transparent,
+            leftspinevisible = <span class="hljs-literal">false</span>,
+            rightspinevisible = <span class="hljs-literal">false</span>,
+            topspinevisible = <span class="hljs-literal">false</span>,
+            bottomspinecolor = :white,
+            xticklabelcolor = :white,
+            xtickcolor = :white,
+            yticklabelcolor = :white,
+            ytickcolor = :white,
+            xgridcolor = :transparent,
+            ygridcolor = :transparent,
+        ),
+    Hist = (strokecolor = :white, strokewidth = <span class="hljs-number">1</span>,)
+)
+
+plot4 = ggplot(df) +
+    geom_histogram(aes(x = :x),
+      color = (:transparent, <span class="hljs-number">0.5</span>)) +
+    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme_dark</code></pre>
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot4' not found. //</span></p>
+<p>Success&#33; There&#39;s lots more than can be done here but I&#39;m happy with the basic look.</p>
+<hr />
+<div class="page-foot">
+    <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
+    <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the
+    <a href="https://julialang.org">Julia programming language</a>. Design
+    inspired by
+    <a href="https://owickstrom.github.io/the-monospace-web/"
+        >The Monospace Web</a
+    >.
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>

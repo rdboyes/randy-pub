@@ -1,3 +1,6 @@
 [deps]
+FFMPEG_jll = "b22a6f82-2f65-5046-a5b2-351ab43fb4e5"
 Franklin = "713c75ef-9fc9-4b05-94a9-213340da978e"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 NodeJS = "2bd173c7-0d6d-553b-b6af-13a54713934c"
+TidierPlots = "337ecbd1-5042-4e2a-ae6f-ca776f97570a"
