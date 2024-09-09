@@ -76,7 +76,7 @@ h4,
 h5,
 h6 {
     font-weight: var(--font-weight-bold);
-    margin: calc(var(--line-height) * 2) 0 var(--line-height);
+    margin: var(--line-height) 0 var(--line-height);
     line-height: var(--line-height);
 }
 
@@ -144,16 +144,16 @@ sub {
 
 table {
     position: relative;
-    top: calc(var(--line-height) / 2);
+    top: 0;
     width: calc(round(down, 100%, 1ch));
     border-collapse: collapse;
-    margin: 0 0 calc(var(--line-height) * 2);
+    margin: calc((var(--line-height) / 2) - (var(--border-thickness) / 2)) 0
+        calc((var(--line-height) / 2) - (var(--border-thickness) / 2));
 }
 
 td {
     padding: calc((var(--line-height) / 2))
-        calc(1ch - var(--border-thickness) / 2)
-        calc((var(--line-height) / 2) - (var(--border-thickness)));
+        calc(1ch - var(--border-thickness) / 2) calc((var(--line-height) / 2));
     line-height: var(--line-height);
     vertical-align: top;
     text-align: left;
@@ -161,17 +161,23 @@ td {
 
 td[scope="header"] {
     border: var(--border-thickness) solid var(--text-color);
-    padding: 0.6rem calc(1ch - 1px) calc(0.6rem - 2px);
+    padding-top: calc(
+        ((var(--line-height) / 2) - (var(--border-thickness) / 2))
+    );
+    padding-bottom: calc(
+        ((var(--line-height) / 2) - (var(--border-thickness) / 2))
+    );
+    padding-left: calc(1ch - 1px);
+    padding-right: calc(1ch - 1px);
     line-height: var(--line-height);
-    vertical-align: top;
+    vertical-align: middle;
     text-align: left;
 }
 
 th[scope="col"] {
     font-weight: 700;
     border-bottom: var(--border-thickness) solid var(--text-color);
-    padding: calc((var(--line-height) / 2))
-        calc(1ch - var(--border-thickness) / 2)
+    padding: 0 calc(1ch - var(--border-thickness) / 2)
         calc((var(--line-height) / 2) - (var(--border-thickness)));
     line-height: var(--line-height);
     vertical-align: top;
@@ -182,8 +188,7 @@ th[scope="corner"] {
     font-weight: 700;
     border-right: var(--border-thickness) solid var(--text-color);
     border-bottom: var(--border-thickness) solid var(--text-color);
-    padding: calc((var(--line-height) / 2))
-        calc(1ch - var(--border-thickness) / 2)
+    padding: 0 calc(1ch - var(--border-thickness) / 2)
         calc((var(--line-height) / 2) - (var(--border-thickness)));
     line-height: var(--line-height);
     vertical-align: top;
@@ -194,15 +199,11 @@ th[scope="row"] {
     font-weight: 700;
     border-right: var(--border-thickness) solid var(--text-color);
     padding: calc((var(--line-height) / 2))
-        calc(1ch - var(--border-thickness) / 2)
+        calc(1ch - (var(--border-thickness) / 2))
         calc((var(--line-height) / 2) - (var(--border-thickness)));
     line-height: var(--line-height);
     vertical-align: top;
     text-align: left;
-}
-
-table tbody tr:first-child > * {
-    padding-top: calc((var(--line-height) / 2) - var(--border-thickness));
 }
 
 .width-min {
@@ -214,7 +215,7 @@ table tbody tr:first-child > * {
 }
 
 .header {
-    margin-bottom: calc(var(--line-height) * 2);
+    margin-bottom: calc(var(--line-height) / 2);
 }
 
 .header h1 {
@@ -582,13 +583,13 @@ label input {
     display: block;
     padding: 0.5em;
     background: #242635;
+    padding-bottom: 1em;
     color: #f3f3f3;
     margin-bottom: 0.5em;
 }
 .hljs-comment,
 .hljs-quote {
     color: #777;
-    font-style: italic;
 }
 .hljs-keyword,
 .hljs-selector-tag,

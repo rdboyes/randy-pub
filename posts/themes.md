@@ -12,6 +12,7 @@ TidierPlots.jl has full support for Makie themes. For example:
 using TidierPlots
 using Random
 using DataFrames
+using Makie
 
 Random.seed!(123)
 n = 200
@@ -31,7 +32,14 @@ ggsave(plot1, joinpath(@OUTPUT, "themes_plot1.png")) # hide
 Lets make this plot fit a little better with the monospace theme we've got going on this site. First - the most obvious change. We need to change the font.
 
 ```julia:themes_2
-using Makie
+using TidierPlots #hide
+using Random #hide
+using DataFrames #hide
+using Makie #hide
+
+Random.seed!(123) #hide
+n = 200 #hide
+df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
 randy_pub_theme = Theme(
   fonts=(;regular="JetBrains Mono")
@@ -52,6 +60,15 @@ The syntax looks a little funny if you're coming from R, so it's worth a little 
 Edits to the overall figure are done directly within the Theme call, while changes to ["Blocks"](https://docs.makie.org/stable/explanations/blocks) are done within a "UppercaseBlockName = (tuple of Attributes)" argument to Theme. We're going to need to change a lot of options for Axis (whose Attributes are listed [here](https://docs.makie.org/stable/reference/blocks/axis#attributes) in order to make this theme look right. Lets start by getting rid of the background and all of the axis lines except the bottom.
 
 ```julia:themes_3
+using TidierPlots #hide
+using Random #hide
+using DataFrames #hide
+using Makie #hide
+
+Random.seed!(123) #hide
+n = 200 #hide
+df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
+
 randy_pub_theme = Theme(
     fonts=(;regular="JetBrains Mono"),
     backgroundcolor = :transparent,
@@ -76,9 +93,58 @@ ggsave(plot3, joinpath(@OUTPUT, "themes_plot3.png")) # hide
 
 Notice that there are two different calls to "background = :transparent". The one inside the Axis group makes the Axis background transparent, and the one at the base level makes the figure's background transparent.
 
+Now we need to align the figure with the monospace grid.
+
+```julia:themes_3a
+using TidierPlots #hide
+using Random #hide
+using DataFrames #hide
+using Makie #hide
+
+Random.seed!(123) #hide
+n = 200 #hide
+df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
+
+randy_pub_theme = Theme(
+    fonts=(;regular="JetBrains Mono"),
+    backgroundcolor = :transparent,
+    Axis = (
+            backgroundcolor = :transparent,
+            leftspinevisible = false,
+            rightspinevisible = false,
+            topspinevisible = false,
+            xgridcolor = :transparent,
+            ygridcolor = :transparent,
+            width = 468,
+            height = 365,
+            yticklabelpad = .25,
+        ),
+        Hist = (strokewidth = 1, bins = 21)
+)
+
+plot3a = ggplot(df) +
+    geom_histogram(aes(x = :x),
+      color = (:transparent, 0.5), strokewidth = 1) +
+    lims(x = c(-4, 4), y = c(0, 30)) + randy_pub_theme
+
+ggsave(plot3a, joinpath(@OUTPUT, "themes_plot3a.png")) # hide
+```
+\fig{themes_plot3a}
+
+
+
 We need to tweak the colors now for dark mode:
 
 ```julia:themes_4
+using TidierPlots #hide
+using Random #hide
+using DataFrames #hide
+using Makie #hide
+
+Random.seed!(123) #hide
+n = 200 #hide
+df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
+
 randy_pub_theme_dark = Theme(
     fonts=(;regular="JetBrains Mono"),
     backgroundcolor = :transparent,
@@ -94,14 +160,17 @@ randy_pub_theme_dark = Theme(
             ytickcolor = :white,
             xgridcolor = :transparent,
             ygridcolor = :transparent,
+            width = 468,
+            height = 365,
+            yticklabelpad = .25
         ),
-    Hist = (strokecolor = :white, strokewidth = 1,)
+    Hist = (strokecolor = :white, strokewidth = 1, bins = 21)
 )
 
 plot4 = ggplot(df) +
     geom_histogram(aes(x = :x),
       color = (:transparent, 0.5)) +
-    lims(x = c(-4, 4)) + randy_pub_theme_dark
+    lims(x = c(-4, 4), y = c(0, 30)) + randy_pub_theme_dark
 
 ggsave(plot4, joinpath(@OUTPUT, "themes_plot4.png")) # hide
 ```
