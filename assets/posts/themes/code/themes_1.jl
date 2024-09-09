@@ -2,6 +2,7 @@
 using TidierPlots
 using Random
 using DataFrames
+using Makie
 
 Random.seed!(123)
 n = 200

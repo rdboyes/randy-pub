@@ -40,7 +40,6 @@
         </td>
     </tr>
 </table>
-<div class="debug-grid"></div>
 <label class="debug-toggle-label"
     ><input type="checkbox" class="debug-toggle" /> Debug mode</label
 >
@@ -191,6 +190,7 @@
 <pre><code class="julia hljs"><span class="hljs-keyword">using</span> TidierPlots
 <span class="hljs-keyword">using</span> Random
 <span class="hljs-keyword">using</span> DataFrames
+<span class="hljs-keyword">using</span> Makie
 
 Random.seed!(<span class="hljs-number">123</span>)
 n = <span class="hljs-number">200</span>
@@ -203,9 +203,7 @@ plot1 = ggplot(df) +
     lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + theme_minimal() <span class="hljs-comment"># theme_minimal is from Makie</span></code></pre>
 <img src="/assets/posts/themes/code/output/themes_plot1.png" alt="">
 <p>Lets make this plot fit a little better with the monospace theme we&#39;ve got going on this site. First - the most obvious change. We need to change the font.</p>
-<pre><code class="julia hljs"><span class="hljs-keyword">using</span> Makie
-
-randy_pub_theme = Theme(
+<pre><code class="julia hljs">randy_pub_theme = Theme(
   fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>)
 )
 
@@ -236,6 +234,29 @@ plot3 = ggplot(df) +
     lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme</code></pre>
 <img src="/assets/posts/themes/code/output/themes_plot3.png" alt="">
 <p>Notice that there are two different calls to &quot;background &#61; :transparent&quot;. The one inside the Axis group makes the Axis background transparent, and the one at the base level makes the figure&#39;s background transparent.</p>
+<p>Now we need to align the figure with the monospace grid.</p>
+<pre><code class="julia hljs">randy_pub_theme = Theme(
+    fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>),
+    backgroundcolor = :transparent,
+    Axis = (
+            backgroundcolor = :transparent,
+            leftspinevisible = <span class="hljs-literal">false</span>,
+            rightspinevisible = <span class="hljs-literal">false</span>,
+            topspinevisible = <span class="hljs-literal">false</span>,
+            xgridcolor = :transparent,
+            ygridcolor = :transparent,
+            width = <span class="hljs-number">468</span>,
+            height = <span class="hljs-number">365</span>,
+            yticklabelpad = <span class="hljs-number">.25</span>,
+        ),
+        Hist = (strokewidth = <span class="hljs-number">1</span>, bins = <span class="hljs-number">21</span>)
+)
+
+plot3a = ggplot(df) +
+    geom_histogram(aes(x = :x),
+      color = (:transparent, <span class="hljs-number">0.5</span>), strokewidth = <span class="hljs-number">1</span>) +
+    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), y = c(<span class="hljs-number">0</span>, <span class="hljs-number">30</span>)) + randy_pub_theme</code></pre>
+<img src="/assets/posts/themes/code/output/themes_plot3a.png" alt="">
 <p>We need to tweak the colors now for dark mode:</p>
 <pre><code class="julia hljs">randy_pub_theme_dark = Theme(
     fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>),
@@ -252,14 +273,17 @@ plot3 = ggplot(df) +
             ytickcolor = :white,
             xgridcolor = :transparent,
             ygridcolor = :transparent,
+            width = <span class="hljs-number">468</span>,
+            height = <span class="hljs-number">365</span>,
+            yticklabelpad = <span class="hljs-number">.25</span>
         ),
-    Hist = (strokecolor = :white, strokewidth = <span class="hljs-number">1</span>,)
+    Hist = (strokecolor = :white, strokewidth = <span class="hljs-number">1</span>, bins = <span class="hljs-number">21</span>)
 )
 
 plot4 = ggplot(df) +
     geom_histogram(aes(x = :x),
       color = (:transparent, <span class="hljs-number">0.5</span>)) +
-    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme_dark</code></pre>
+    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), y = c(<span class="hljs-number">0</span>, <span class="hljs-number">30</span>)) + randy_pub_theme_dark</code></pre>
 <img src="/assets/posts/themes/code/output/themes_plot4.png" alt="">
 <p>Success&#33; There&#39;s lots more than can be done here but I&#39;m happy with the basic look. We can also use a little html to swap out the theme based on user&#39;s dark mode setting:</p>
 
@@ -282,9 +306,6 @@ plot4 = ggplot(df) +
     <a href="https://owickstrom.github.io/the-monospace-web/"
         >The Monospace Web</a
     >.
-    <label class="debug-toggle-label"
-        ><input type="checkbox" class="debug-toggle" /> Debug mode</label
-    >
 </div>
 </div><!-- CONTENT ENDS HERE -->
     
@@ -293,7 +314,5 @@ plot4 = ggplot(df) +
 <script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
 
     
-    <div class="debug-grid"></div>
-    <script src="index.js"></script>
   </body>
 </html>

@@ -8,7 +8,7 @@ Random.seed!(123) #hide
 n = 200 #hide
 df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
-randy_pub_theme_dark = Theme(
+randy_pub_theme = Theme(
     fonts=(;regular="JetBrains Mono"),
     backgroundcolor = :transparent,
     Axis = (
@@ -16,23 +16,18 @@ randy_pub_theme_dark = Theme(
             leftspinevisible = false,
             rightspinevisible = false,
             topspinevisible = false,
-            bottomspinecolor = :white,
-            xticklabelcolor = :white,
-            xtickcolor = :white,
-            yticklabelcolor = :white,
-            ytickcolor = :white,
             xgridcolor = :transparent,
             ygridcolor = :transparent,
             width = 468,
             height = 365,
-            yticklabelpad = .25
+            yticklabelpad = .25,
         ),
-    Hist = (strokecolor = :white, strokewidth = 1, bins = 21)
+        Hist = (strokewidth = 1, bins = 21)
 )
 
-plot4 = ggplot(df) +
+plot3a = ggplot(df) +
     geom_histogram(aes(x = :x),
-      color = (:transparent, 0.5)) +
-    lims(x = c(-4, 4), y = c(0, 30)) + randy_pub_theme_dark
+      color = (:transparent, 0.5), strokewidth = 1) +
+    lims(x = c(-4, 4), y = c(0, 30)) + randy_pub_theme
 
-ggsave(plot4, joinpath(@OUTPUT, "themes_plot4.png")) # hide
+ggsave(plot3a, joinpath(@OUTPUT, "themes_plot3a.png")) # hide

@@ -1,5 +1,12 @@
 # This file was generated, do not modify it. # hide
-using Makie
+using TidierPlots #hide
+using Random #hide
+using DataFrames #hide
+using Makie #hide
+
+Random.seed!(123) #hide
+n = 200 #hide
+df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
 randy_pub_theme = Theme(
   fonts=(;regular="JetBrains Mono")
