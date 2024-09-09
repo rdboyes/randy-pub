@@ -27,7 +27,7 @@
     <tr>
         <td scope="header">Updated</td>
         <td scope="header">
-            <time> September 08, 2024</time>
+            <time> September 09, 2024</time>
         </td>
     </tr>
     <tr>
@@ -120,7 +120,18 @@ plot4 = ggplot(df) +
       color = (:transparent, <span class="hljs-number">0.5</span>)) +
     lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme_dark</code></pre>
 <img src="/assets/posts/themes/code/output/themes_plot4.png" alt="">
-<p>Success&#33; There&#39;s lots more than can be done here but I&#39;m happy with the basic look.</p>
+<p>Success&#33; There&#39;s lots more than can be done here but I&#39;m happy with the basic look. We can use a little html to swap out the theme based on user&#39;s dark mode setting:</p>
+
+<picture>
+  <source
+    srcset="/assets/posts/themes/code/output/themes_plot4.png"
+    media="(prefers-color-scheme: dark)"
+  />
+  <img
+    src="/assets/posts/themes/code/output/themes_plot3.png"
+  />
+</picture>
+
 <hr />
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
