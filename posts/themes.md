@@ -107,7 +107,7 @@ ggsave(plot4, joinpath(@OUTPUT, "themes_plot4.png")) # hide
 ```
 \fig{themes_plot4}
 
-Success! There's lots more than can be done here but I'm happy with the basic look. We can use a little html to swap out the theme based on user's dark mode setting:
+Success! There's lots more than can be done here but I'm happy with the basic look. We can also use a little html to swap out the theme based on user's dark mode setting:
 
 ~~~
 <picture>

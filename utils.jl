@@ -20,7 +20,6 @@ function hfun_recent_posts(m::Vector{String})
     n = parse(Int64, m[1])
     list = readdir("posts")
     filter!(f -> endswith(f, ".md") && f != "index.md", list)
-    markdown = ""
     posts = []
     df = DateFormat("mm/dd/yyyy")
     for (k, post) in enumerate(list)
@@ -30,6 +29,10 @@ function hfun_recent_posts(m::Vector{String})
         date = Date(pagevar(fi, :date), df)
         push!(posts, (title=title, link=fi, date=date))
     end
+
+    markdown = "Dict{Date, String} with " *
+        string(n >= 0 ? n : length(posts)) *
+        " entrys:\n\n"
 
     # pull all posts if n <= 0
     n = n >= 0 ? n : length(posts) + 1

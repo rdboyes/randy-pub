@@ -51,8 +51,6 @@ I (Randy) am currently working as the Director of Analytics at [Presage Group In
 <span style="color:#5BC5E2;">print</span>(Recent)
 ~~~
 
-Dict{Date, String} with 2 entrys:
-
 {{ recent_posts 2 }}
 
 ---
