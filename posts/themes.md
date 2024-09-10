@@ -185,7 +185,7 @@ Success! There's lots more than can be done here but I'm happy with the basic lo
     media="(prefers-color-scheme: dark)"
   />
   <img
-    src="/assets/posts/themes/code/output/themes_plot3.png"
+    src="/assets/posts/themes/code/output/themes_plot3a.png"
   />
 </picture>
 ~~~
