@@ -44,6 +44,15 @@ function hfun_recent_posts(m::Vector{String})
     return fd2html(markdown, internal=true)
 end
 
+function hfun_add_bsky_comments(post_url::Vector{String})
+    post = post_url[1]
+    html = "
+        <script src=\"../bsky-comments.js\"></script>
+        <bsky-comments post=\"$(post)\"></bsky-comments>
+    "
+    return html
+end
+
 @delay function hfun_all_posts()
     return hfun_recent_posts(["-1"])
 end
