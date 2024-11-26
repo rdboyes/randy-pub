@@ -1,0 +1,2 @@
+ArgumentError: Package TidierData not found in current path.
+- Run `import Pkg; Pkg.add("TidierData")` to install the TidierData package.

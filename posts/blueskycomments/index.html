@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="/css/basic.css" />
         <link rel="icon" href="/assets/favicon.png" />
         
-        <title>Basics of Making Makie Themes for TidierPlots</title>
+        <title>Bluesky comments sections in Franklin.jl</title>
         
     </head>
     <body>
@@ -184,118 +184,23 @@
         onDebugToggle();
     </script>
 </html>
-<div class="franklin-content"><h2 id="themes"><a href="#themes" class="header-anchor">Themes</a></h2>
-<p>TidierPlots.jl has full support for Makie themes. For example:</p>
-<pre><code class="julia hljs"><span class="hljs-keyword">using</span> TidierPlots
-<span class="hljs-keyword">using</span> Random
-<span class="hljs-keyword">using</span> DataFrames
-<span class="hljs-keyword">using</span> Makie
+<div class="franklin-content"><h2 id="adding_a_comments_section_from_bluesky"><a href="#adding_a_comments_section_from_bluesky" class="header-anchor">Adding a comments section from BlueSky</a></h2>
+<p>This <a href="https://emilyliu.me/blog/comments">post</a> shows how you can add Bluesky posts as blog comments in general, and the code was added to an npm package <a href="https://www.npmjs.com/package/bluesky-comments">here</a>. We can steal that code to add it to a Franklin.jl site easily. Download the bsky-comments.js file <a href="https://gist.githubusercontent.com/LoueeD/b7dec10b2ea56c825cbb0b3a514720ed/raw/1caceb84ec7612503db3a955a55af4501bcf0150/bsky-comments.js">here</a> &#40;or grab my slightly modified one from this website&#39;s github repo under posts/bsky-comments.js&#41; and add the following function to your utils.jl file:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> hfun_add_bsky_comments(post_url::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">String</span>})
+    post = post_url[<span class="hljs-number">1</span>]
+    html = <span class="hljs-string">&quot;
+        &lt;script src=\&quot;../bsky-comments.js\&quot;&gt;&lt;/script&gt;
+        &lt;bsky-comments post=\&quot;<span class="hljs-subst">$(post)</span>\&quot;&gt;&lt;/bsky-comments&gt;
+    &quot;</span>
+    <span class="hljs-keyword">return</span> html
+<span class="hljs-keyword">end</span></code></pre>
+<p>Now add the following to the end of your post markdown &#40;data-bluesky-uri can be seen if you click &quot;embed post&quot; on any post, amoung other places&#41;:</p>
+<pre><code class="julia hljs">{{ add_bsky_comments data-bluesky-uri_of_your_post_in_quotes }}</code></pre>
+<p>Which should give you:</p>
 
-Random.seed!(<span class="hljs-number">123</span>)
-n = <span class="hljs-number">200</span>
-df = DataFrame(x = randn(n) / <span class="hljs-number">2</span>, y = randn(n))
-
-plot1 = ggplot(df) +
-    geom_histogram(aes(x = :x),
-      color = (:orangered, <span class="hljs-number">0.5</span>),
-      strokewidth = <span class="hljs-number">0.5</span>) +
-    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + theme_minimal() <span class="hljs-comment"># theme_minimal is from Makie</span></code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot1.png" alt="">
-<p>Lets make this plot fit a little better with the monospace theme we&#39;ve got going on this site. First - the most obvious change. We need to change the font.</p>
-<pre><code class="julia hljs">randy_pub_theme = Theme(
-  fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>)
-)
-
-plot2 = ggplot(df) +
-    geom_histogram(aes(x = :x),
-      color = (:orangered, <span class="hljs-number">0.5</span>),
-      strokewidth = <span class="hljs-number">0.5</span>) +
-    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme</code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot2.png" alt="">
-<p>The syntax looks a little funny if you&#39;re coming from R, so it&#39;s worth a little detour to talk about which elements can be used in themes, and how to pass them in. Makie themes can contain settings for the Attributes of any object. To change the font, we want to edit the <a href="https://docs.makie.org/stable/reference/plots/text#fonts">&quot;fonts&quot; Attribute</a> of the Figure which says it needs a &quot;dictionary&quot; that ties font styles &#40;e.g. &quot;regular&quot;&#41; to fonts &#40;&quot;JetBrains Mono&quot;&#41;. I honestly don&#39;t know why it says it wants a dictionary and then demands a named tuple instead, but that&#39;s the way it works. For more info, see the explanation <a href="https://docs.makie.org/stable/explanations/fonts">here</a>.</p>
-<p>Edits to the overall figure are done directly within the Theme call, while changes to <a href="https://docs.makie.org/stable/explanations/blocks">&quot;Blocks&quot;</a> are done within a &quot;UppercaseBlockName &#61; &#40;tuple of Attributes&#41;&quot; argument to Theme. We&#39;re going to need to change a lot of options for Axis &#40;whose Attributes are listed <a href="https://docs.makie.org/stable/reference/blocks/axis#attributes">here</a> in order to make this theme look right. Lets start by getting rid of the background and all of the axis lines except the bottom.</p>
-<pre><code class="julia hljs">randy_pub_theme = Theme(
-    fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>),
-    backgroundcolor = :transparent,
-    Axis = (
-            backgroundcolor = :transparent,
-            leftspinevisible = <span class="hljs-literal">false</span>,
-            rightspinevisible = <span class="hljs-literal">false</span>,
-            topspinevisible = <span class="hljs-literal">false</span>,
-            xgridcolor = :transparent,
-            ygridcolor = :transparent,
-        )
-)
-
-plot3 = ggplot(df) +
-    geom_histogram(aes(x = :x),
-      color = (:transparent, <span class="hljs-number">0.5</span>), strokewidth = <span class="hljs-number">1</span>) +
-    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme</code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot3.png" alt="">
-<p>Notice that there are two different calls to &quot;background &#61; :transparent&quot;. The one inside the Axis group makes the Axis background transparent, and the one at the base level makes the figure&#39;s background transparent.</p>
-<p>Now we need to align the figure with the monospace grid.</p>
-<pre><code class="julia hljs">randy_pub_theme = Theme(
-    fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>),
-    backgroundcolor = :transparent,
-    Axis = (
-            backgroundcolor = :transparent,
-            leftspinevisible = <span class="hljs-literal">false</span>,
-            rightspinevisible = <span class="hljs-literal">false</span>,
-            topspinevisible = <span class="hljs-literal">false</span>,
-            xgridcolor = :transparent,
-            ygridcolor = :transparent,
-            width = <span class="hljs-number">468</span>,
-            height = <span class="hljs-number">365</span>,
-            yticklabelpad = <span class="hljs-number">.25</span>,
-        ),
-        Hist = (strokewidth = <span class="hljs-number">1</span>, bins = <span class="hljs-number">21</span>)
-)
-
-plot3a = ggplot(df) +
-    geom_histogram(aes(x = :x),
-      color = (:transparent, <span class="hljs-number">0.5</span>), strokewidth = <span class="hljs-number">1</span>) +
-    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), y = c(<span class="hljs-number">0</span>, <span class="hljs-number">30</span>)) + randy_pub_theme</code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot3a.png" alt="">
-<p>We need to tweak the colors now for dark mode:</p>
-<pre><code class="julia hljs">randy_pub_theme_dark = Theme(
-    fonts=(;regular=<span class="hljs-string">&quot;JetBrains Mono&quot;</span>),
-    backgroundcolor = :transparent,
-    Axis = (
-            backgroundcolor = :transparent,
-            leftspinevisible = <span class="hljs-literal">false</span>,
-            rightspinevisible = <span class="hljs-literal">false</span>,
-            topspinevisible = <span class="hljs-literal">false</span>,
-            bottomspinecolor = :white,
-            xticklabelcolor = :white,
-            xtickcolor = :white,
-            yticklabelcolor = :white,
-            ytickcolor = :white,
-            xgridcolor = :transparent,
-            ygridcolor = :transparent,
-            width = <span class="hljs-number">468</span>,
-            height = <span class="hljs-number">365</span>,
-            yticklabelpad = <span class="hljs-number">.25</span>
-        ),
-    Hist = (strokecolor = :white, strokewidth = <span class="hljs-number">1</span>, bins = <span class="hljs-number">21</span>)
-)
-
-plot4 = ggplot(df) +
-    geom_histogram(aes(x = :x),
-      color = (:transparent, <span class="hljs-number">0.5</span>)) +
-    lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), y = c(<span class="hljs-number">0</span>, <span class="hljs-number">30</span>)) + randy_pub_theme_dark</code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot4.png" alt="">
-<p>Success&#33; There&#39;s lots more than can be done here but I&#39;m happy with the basic look. We can also use a little html to swap out the theme based on user&#39;s dark mode setting:</p>
-
-<picture>
-  <source
-    srcset="/assets/posts/themes/code/output/themes_plot4.png"
-    media="(prefers-color-scheme: dark)"
-  />
-  <img
-    src="/assets/posts/themes/code/output/themes_plot3a.png"
-  />
-</picture>
-
+        <script src="../bsky-comments.js"></script>
+        <bsky-comments post="at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lbupbkcn4s2n"></bsky-comments>
+    
 <hr />
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
