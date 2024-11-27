@@ -3,7 +3,7 @@
 <span style="color:#5BC5E2;">print</span>(Intro)
 ~~~
 
-I (Randy) am currently working as the Director of Analytics at [Presage Group Inc.](https://presagegroup.com/). I completed my Ph.D. in Epidemiology at Queen's University in 2023.
+"I (Randy) am currently working as the Director of Analytics at [Presage Group Inc.](https://presagegroup.com/). I completed my Ph.D. in Epidemiology at Queen's University in 2023. I live a "short" ferry ride away from Kingston, ON on Wolfe Island."
 
 ~~~
 <span style="color:#70C66B;">julia></span>
@@ -30,7 +30,7 @@ I (Randy) am currently working as the Director of Analytics at [Presage Group In
   <tr>
     <th class="width-min" scope = "row">2</th>
     <td>BlueSky</td>
-    <td><a href = "https://bsky.app/profile/rboyes.bsky.social">rboyes.bsky.social</a></td>
+    <td><a href = "https://bsky.app/profile/randy.pub">@randy.pub</a></td>
   </tr>
   <tr>
     <th class="width-min" scope = "row">3</th>

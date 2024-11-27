@@ -163,14 +163,14 @@ class BskyComments extends HTMLElement {
     const style = document.createElement("style");
     style.textContent = `
       :host {
-        --text-color: #1185FE;
+        --text-color: white;
         --link-color: gray;
-        --link-hover-color: black;
-        --comment-meta-color: gray;
+        --link-hover-color: white;
+        --comment-meta-color: white;
         --error-color: red;
         --reply-border-color: #ccc;
-        --button-background-color: rgba(0,0,0,0.05);
-        --button-hover-background-color: rgba(0,0,0,0.1);
+        --button-background-color: white;
+        --button-hover-background-color: #1185FE;
         --author-avatar-border-radius: 100%;
       }
 
@@ -179,7 +179,7 @@ class BskyComments extends HTMLElement {
         padding: 1.2em;
         max-width: 720px;
         display: block;
-        background-color: var(--background-color);
+        background-color: #242635;
         color: var(--text-color);
       }
       .reply-info {
@@ -187,6 +187,7 @@ class BskyComments extends HTMLElement {
         color: var(--text-color);
       }
       #show-more {
+        text-color: white;
         margin-top: 10px;
         width: 100%;
         padding: 1em;
