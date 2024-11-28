@@ -4,12 +4,14 @@ using Random #hide
 using DataFrames #hide
 using Makie #hide
 
+juliamono = "https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Light.woff2" # hide
+
 Random.seed!(123) #hide
 n = 200 #hide
 df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
 randy_pub_theme_dark = Theme(
-    fonts=(;regular="JuliaMono-Light"),
+    fonts=(;regular=juliamono),
     backgroundcolor = :transparent,
     Axis = (
             backgroundcolor = :transparent,
