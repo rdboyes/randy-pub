@@ -41,8 +41,10 @@ Random.seed!(123) #hide
 n = 200 #hide
 df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
+juliamono = "https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Light.woff2"
+
 randy_pub_theme = Theme(
-  fonts=(;regular="JuliaMono-Light")
+  fonts=(;regular=juliamono)
 )
 
 plot2 = ggplot(df) +
@@ -55,7 +57,7 @@ ggsave(plot2, joinpath(@OUTPUT, "themes_plot2.png")) # hide
 ```
 \fig{themes_plot2}
 
-The syntax looks a little funny if you're coming from R, so it's worth a little detour to talk about which elements can be used in themes, and how to pass them in. Makie themes can contain settings for the Attributes of any object. To change the font, we want to edit the ["fonts" Attribute](https://docs.makie.org/stable/reference/plots/text#fonts) of the Figure which says it needs a "dictionary" that ties font styles (e.g. "regular") to fonts ("JetBrains Mono"). I honestly don't know why it says it wants a dictionary and then demands a named tuple instead, but that's the way it works. For more info, see the explanation [here](https://docs.makie.org/stable/explanations/fonts).
+The syntax looks a little funny if you're coming from R, so it's worth a little detour to talk about which elements can be used in themes, and how to pass them in. Makie themes can contain settings for the Attributes of any object. To change the font, we want to edit the ["fonts" Attribute](https://docs.makie.org/stable/reference/plots/text#fonts) of the Figure which says it needs a "dictionary" that ties font styles (e.g. "regular") to fonts ("JuliaMono-Light"). I honestly don't know why it says it wants a dictionary and then demands a named tuple instead, but that's the way it works. For more info, see the explanation [here](https://docs.makie.org/stable/explanations/fonts).
 
 Edits to the overall figure are done directly within the Theme call, while changes to ["Blocks"](https://docs.makie.org/stable/explanations/blocks) are done within a "UppercaseBlockName = (tuple of Attributes)" argument to Theme. We're going to need to change a lot of options for Axis (whose Attributes are listed [here](https://docs.makie.org/stable/reference/blocks/axis#attributes) in order to make this theme look right. Lets start by getting rid of the background and all of the axis lines except the bottom.
 
@@ -65,12 +67,14 @@ using Random #hide
 using DataFrames #hide
 using Makie #hide
 
+juliamono = "https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Light.woff2" # hide
+
 Random.seed!(123) #hide
 n = 200 #hide
 df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
 randy_pub_theme = Theme(
-    fonts=(;regular="JuliaMono-Light"),
+    fonts=(;regular=juliamono),
     backgroundcolor = :transparent,
     Axis = (
             backgroundcolor = :transparent,
@@ -101,12 +105,14 @@ using Random #hide
 using DataFrames #hide
 using Makie #hide
 
+juliamono = "https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Light.woff2" # hide
+
 Random.seed!(123) #hide
 n = 200 #hide
 df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
 randy_pub_theme = Theme(
-    fonts=(;regular="JuliaMono-Light"),
+    fonts=(;regular=juliamono),
     backgroundcolor = :transparent,
     Axis = (
             backgroundcolor = :transparent,
@@ -141,12 +147,14 @@ using Random #hide
 using DataFrames #hide
 using Makie #hide
 
+juliamono = "https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Light.woff2" # hide
+
 Random.seed!(123) #hide
 n = 200 #hide
 df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
 randy_pub_theme_dark = Theme(
-    fonts=(;regular="JuliaMono-Light"),
+    fonts=(;regular=juliamono),
     backgroundcolor = :transparent,
     Axis = (
             backgroundcolor = :transparent,

@@ -1,7 +1,9 @@
 [deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 FFMPEG_jll = "b22a6f82-2f65-5046-a5b2-351ab43fb4e5"
 Franklin = "713c75ef-9fc9-4b05-94a9-213340da978e"
+FreeType = "b38be410-82b0-50bf-ab77-7b57e271db43"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 NodeJS = "2bd173c7-0d6d-553b-b6af-13a54713934c"
 TidierPlots = "337ecbd1-5042-4e2a-ae6f-ca776f97570a"
