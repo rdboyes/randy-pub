@@ -9,7 +9,7 @@ n = 200 #hide
 df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
 randy_pub_theme = Theme(
-  fonts=(;regular="JetBrains Mono")
+  fonts=(;regular="JuliaMono-Light")
 )
 
 plot2 = ggplot(df) +

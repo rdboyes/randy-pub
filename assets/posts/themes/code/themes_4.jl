@@ -9,7 +9,7 @@ n = 200 #hide
 df = DataFrame(x = randn(n) / 2, y = randn(n)) #hide
 
 randy_pub_theme_dark = Theme(
-    fonts=(;regular="JetBrains Mono"),
+    fonts=(;regular="JuliaMono-Light"),
     backgroundcolor = :transparent,
     Axis = (
             backgroundcolor = :transparent,
