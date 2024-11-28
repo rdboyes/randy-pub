@@ -1,7 +1,10 @@
-@import url("https://fonts.cdnfonts.com/css/jetbrains-mono-2");
+@font-face {
+    font-family: JuliaMono-Light;
+    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Light.woff2");
+}
 
 :root {
-    --font-family: "JetBrains Mono", monospace;
+    --font-family: "JuliaMono-Light", monospace;
     --line-height: 1.2rem;
     --border-thickness: 2px;
     --text-color: #000;
@@ -18,7 +21,7 @@
     font-weight: var(--font-weight-normal);
     font-style: normal;
     font-variant-numeric: tabular-nums lining-nums;
-    font-size: 16px;
+    font-size: 1.2em;
 }
 
 @media (prefers-color-scheme: dark) {
