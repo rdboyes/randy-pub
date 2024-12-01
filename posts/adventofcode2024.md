@@ -15,10 +15,17 @@ Unlike last year's first week, Day 1 is nice and easy.
 ```julia
 using TidierFiles
 using TidierData
+using DataFrames
 
 df = read_csv("data/1.txt", col_names = false, delim = "   ")
 
-println("Part 1: $(sum(abs.(sort(df.Column1) .- sort(df.Column2))))")
+p1 = @chain DataFrame(c1 = sort(df.Column1), c2 = sort(df.Column2)) begin
+    @mutate(diff = abs(c1 - c2))
+    @pull(diff)
+    sum
+end
+
+println("Part 1: $p1")
 
 p2 = @chain df begin
     @aside c1 = @count(_, Column1)
@@ -26,10 +33,12 @@ p2 = @chain df begin
     @rename(n_1 = n)
     @left_join(c1, "Column2" = "Column1")
     @mutate(sim_score = Column2 * n * n_1)
-    @summarize(sum = sum(skipmissing(sim_score)))
+    @filter(!ismissing(sim_score))
+    @pull(sim_score)
+    sum
 end
 
-print("Part 2: $(p2[1,1])")
+print("Part 2: $p2")
 ```
 
 Not much to say about Part 1. Independently sorting columns not really a useful operation on a DataFrame usually so the support for it in Tidier is non-existent as far as I can tell, and I think that's a good thing.
