@@ -4,12 +4,14 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
          
+        <link rel="stylesheet" href="/libs/highlight/styles/github.min.css">
+ 
         <link rel="stylesheet" href="/css/reset.css" />
         <link rel="stylesheet" href="/css/normalize.css" />
         <link rel="stylesheet" href="/css/basic.css" />
         <link rel="icon" href="/assets/favicon.png" />
         
-        <title>404</title>
+        <title>Advent of Code Week 1</title>
         
     </head>
     <body>
@@ -183,31 +185,39 @@
         onDebugToggle();
     </script>
 </html>
-<div class="franklin-content">
-<div style="margin-top: 40px; font-size: 40px; text-align: center;">
+<div class="franklin-content"><h2 id="takeaways_from_advent_of_code_week_1"><a href="#takeaways_from_advent_of_code_week_1" class="header-anchor">Takeaways from Advent of Code Week 1</a></h2>
+<p>It&#39;s the most wonderful time of year again - time to engage in my time-honored tradition of starting advent of code and losing steam after the first week when it gets hard. As I did last year, I&#39;ll try this in pure Tidier.jl, hoping to find some rough edges that we can smooth out.</p>
+<h3 id="day_1"><a href="#day_1" class="header-anchor">Day 1</a></h3>
+<p>Unlike last year&#39;s first week, Day 1 is nice and easy.</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">using</span> TidierFiles
+<span class="hljs-keyword">using</span> TidierData
 
-  <br>
+df = read_csv(<span class="hljs-string">&quot;data/1.txt&quot;</span>, col_names = <span class="hljs-literal">false</span>, delim = <span class="hljs-string">&quot;   &quot;</span>)
 
-  <div style="font-weight: bold;">
-    404
-  </div>
+println(<span class="hljs-string">&quot;Part 1: <span class="hljs-subst">$(sum(abs.(sort(df.Column1)</span> .- sort(df.Column2))))&quot;</span>)
 
-  <br>
-  <br>
+p2 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</span>
+    <span class="hljs-meta">@aside</span> c1 = <span class="hljs-meta">@count</span>(_, Column1)
+    <span class="hljs-meta">@count</span>(Column2)
+    <span class="hljs-meta">@rename</span>(n_1 = n)
+    <span class="hljs-meta">@left_join</span>(c1, <span class="hljs-string">&quot;Column2&quot;</span> = <span class="hljs-string">&quot;Column1&quot;</span>)
+    <span class="hljs-meta">@mutate</span>(sim_score = Column2 * n * n_1)
+    <span class="hljs-meta">@summarize</span>(sum = sum(skipmissing(sim_score)))
+<span class="hljs-keyword">end</span>
 
-    The requested page was not found
-
-  <br>
-  <br>
-  <br>
-  <br>
-
-  <div style="margin-bottom: 300px; font-size: 24px">
-    <a href="/">Click here</a> to go back to the homepage.
-  </div>
-
-</div>
-
+print(<span class="hljs-string">&quot;Part 2: <span class="hljs-subst">$(p2[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>])</span>&quot;</span>)</code></pre>
+<p>Not much to say about Part 1. Independently sorting columns not really a useful operation on a DataFrame usually so the support for it in Tidier is non-existent as far as I can tell, and I think that&#39;s a good thing.</p>
+<p>Part 2 has more rough edges:</p>
+<ul>
+<li><p>There seems to be no way to name the column that contains @count&#39;s counts, which means I have to rely on a extra line&#39;d @rename &#40;ew&#41; or type out the equivalent @summarize call &#40;even worse?&#41; - looking it up, this is how it works in R&#39;s tidyverse as well. Fair enough, I guess, but I want a .col_name argument anyway.</p>
+</li>
+<li><p>There&#39;s no way to pass arguments through to DataFrames.leftjoin directly, so we can&#39;t solve the rename problem with makeunique, either. This one seems like an actual improvement to add rather than a pointless nitpick like the first point.</p>
+</li>
+<li><p>The required syntax for non-matching column joins doesn&#39;t match R&#39;s left_join OR the DataFrames.leftjoin syntax. This seems unintuitive. Scared to check the git blame and find out it was me who implemented this...</p>
+</li>
+</ul>
+<p>On the plus side, I love the @aside macro more every time I use it and wish it existed in R as well.</p>
+<h3 id="day_2"><a href="#day_2" class="header-anchor">Day 2</a></h3>
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
     <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the
@@ -220,6 +230,13 @@
 </div>
 </div><!-- CONTENT ENDS HERE -->
     
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>
+    hljs.highlightAll();
+    hljs.configure({ tabReplace: "    " });
+</script>
+
     
   </body>
 </html>
