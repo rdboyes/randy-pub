@@ -51,4 +51,4 @@ Part 2 has more rough edges:
 
 On the plus side, I love the @aside macro more every time I use it and wish it existed in R as well.
 
-### Day 2
+{{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27" }}
