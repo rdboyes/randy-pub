@@ -191,10 +191,17 @@
 <p>Unlike last year&#39;s first week, Day 1 is nice and easy.</p>
 <pre><code class="julia hljs"><span class="hljs-keyword">using</span> TidierFiles
 <span class="hljs-keyword">using</span> TidierData
+<span class="hljs-keyword">using</span> DataFrames
 
 df = read_csv(<span class="hljs-string">&quot;data/1.txt&quot;</span>, col_names = <span class="hljs-literal">false</span>, delim = <span class="hljs-string">&quot;   &quot;</span>)
 
-println(<span class="hljs-string">&quot;Part 1: <span class="hljs-subst">$(sum(abs.(sort(df.Column1)</span> .- sort(df.Column2))))&quot;</span>)
+p1 = <span class="hljs-meta">@chain</span> DataFrame(c1 = sort(df.Column1), c2 = sort(df.Column2)) <span class="hljs-keyword">begin</span>
+    <span class="hljs-meta">@mutate</span>(diff = abs(c1 - c2))
+    <span class="hljs-meta">@pull</span>(diff)
+    sum
+<span class="hljs-keyword">end</span>
+
+println(<span class="hljs-string">&quot;Part 1: <span class="hljs-variable">$p1</span>&quot;</span>)
 
 p2 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</span>
     <span class="hljs-meta">@aside</span> c1 = <span class="hljs-meta">@count</span>(_, Column1)
@@ -202,10 +209,12 @@ p2 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</
     <span class="hljs-meta">@rename</span>(n_1 = n)
     <span class="hljs-meta">@left_join</span>(c1, <span class="hljs-string">&quot;Column2&quot;</span> = <span class="hljs-string">&quot;Column1&quot;</span>)
     <span class="hljs-meta">@mutate</span>(sim_score = Column2 * n * n_1)
-    <span class="hljs-meta">@summarize</span>(sum = sum(skipmissing(sim_score)))
+    <span class="hljs-meta">@filter</span>(!ismissing(sim_score))
+    <span class="hljs-meta">@pull</span>(sim_score)
+    sum
 <span class="hljs-keyword">end</span>
 
-print(<span class="hljs-string">&quot;Part 2: <span class="hljs-subst">$(p2[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>])</span>&quot;</span>)</code></pre>
+print(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</span>&quot;</span>)</code></pre>
 <p>Not much to say about Part 1. Independently sorting columns not really a useful operation on a DataFrame usually so the support for it in Tidier is non-existent as far as I can tell, and I think that&#39;s a good thing.</p>
 <p>Part 2 has more rough edges:</p>
 <ul>
