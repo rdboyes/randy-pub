@@ -72,11 +72,11 @@ end
 
 println("Part 1: $p1")
 
-check_all(l) = any(check_safe.(diff.([l[1:end .!= i] for i in 1:length(l)])))
+check_all(l) = check_safe.(diff.([l[1:end .!= i] for i in 1:length(l)]))
 
 p2 = @chain df begin
     @transmute(list = to_int(split(Column1)))
-    @mutate(safe = check_all(list))
+    @mutate(safe = any(check_all(list)))
     @pull(safe)
     sum
 end
@@ -84,6 +84,6 @@ end
 println("Part 2: $p2")
 ```
 
-One of the biggest struggles here was trying to get fine control of the exact vectorization of functions across list-columns with the Tidier toolbox. You can turn on and off vectorization, sure, but to write a solution to this problem I needed to vectorize *inside rows* and I don't know if that functionality exists or is fully developed. Using list comprehesion inside macros also doesn't seem possible, since you get errors related to the variable "i" and "end" if you try to use the "check_sublists" function inside a mutate.
+One of the biggest struggles here was trying to get fine control of the exact vectorization of functions across list-columns with the Tidier toolbox. You can turn on and off vectorization, sure, but to write a solution to this problem I needed to vectorize *inside rows* and I don't know if that functionality exists or is fully developed. Using list comprehesion inside macros also doesn't seem possible, since you get errors related to the variable "i" and "end" if you try to use the "check_all" function inside a mutate.
 
 {{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27" }}
