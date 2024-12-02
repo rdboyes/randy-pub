@@ -236,7 +236,7 @@ check_safe(steps) = all(steps .&gt; <span class="hljs-number">0</span> .&amp;&am
 
 p1 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</span>
     <span class="hljs-meta">@transmute</span>(list = to_int(split(Column1)))
-    <span class="hljs-meta">@mutate</span>(steps = extrema(diff(list)))
+    <span class="hljs-meta">@mutate</span>(steps = diff(list))
     <span class="hljs-meta">@mutate</span>(safe = check_safe(steps))
     <span class="hljs-meta">@pull</span>(safe)
     sum
@@ -244,13 +244,11 @@ p1 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</
 
 println(<span class="hljs-string">&quot;Part 1: <span class="hljs-variable">$p1</span>&quot;</span>)
 
-<span class="hljs-keyword">function</span> check_sublists(list)
-    any(check_safe.(diff.([list[<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span> .!= i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(list)])))
-<span class="hljs-keyword">end</span>
+check_all(l) = any(check_safe.(diff.([l[<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span> .!= i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(l)])))
 
 p2 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</span>
     <span class="hljs-meta">@transmute</span>(list = to_int(split(Column1)))
-    <span class="hljs-meta">@mutate</span>(safe = check_sublists(list))
+    <span class="hljs-meta">@mutate</span>(safe = check_all(list))
     <span class="hljs-meta">@pull</span>(safe)
     sum
 <span class="hljs-keyword">end</span>
