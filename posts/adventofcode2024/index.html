@@ -256,7 +256,7 @@ p2 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</
 <span class="hljs-keyword">end</span>
 
 println(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</span>&quot;</span>)</code></pre>
-<p>One of the biggest struggles here was trying to get fine control of the exact vectorization of functions across list-columns with the Tidier toolbox. You can turn on and off vectorization, sure, but to write a solution to this problem I needed to vectorized <em>inside rows</em> and I don&#39;t know if that functionality exists or is fully developed. Using list comprehesion inside macros also doesn&#39;t seem possible, since you get errors related to the variable &quot;i&quot; and &quot;end&quot; if you try to use the &quot;check_sublists&quot; function inside a mutate.</p>
+<p>One of the biggest struggles here was trying to get fine control of the exact vectorization of functions across list-columns with the Tidier toolbox. You can turn on and off vectorization, sure, but to write a solution to this problem I needed to vectorize <em>inside rows</em> and I don&#39;t know if that functionality exists or is fully developed. Using list comprehesion inside macros also doesn&#39;t seem possible, since you get errors related to the variable &quot;i&quot; and &quot;end&quot; if you try to use the &quot;check_sublists&quot; function inside a mutate.</p>
 
         <script src="../bsky-comments.js"></script>
         <bsky-comments post="at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27"></bsky-comments>
