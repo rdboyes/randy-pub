@@ -64,7 +64,7 @@ check_safe(steps) = all(steps .> 0 .&& steps .<  4) ||
 
 p1 = @chain df begin
     @transmute(list = to_int(split(Column1)))
-    @mutate(steps = extrema(diff(list)))
+    @mutate(steps = diff(list))
     @mutate(safe = check_safe(steps))
     @pull(safe)
     sum
@@ -72,13 +72,11 @@ end
 
 println("Part 1: $p1")
 
-function check_sublists(list)
-    any(check_safe.(diff.([list[1:end .!= i] for i in 1:length(list)])))
-end
+check_all(l) = any(check_safe.(diff.([l[1:end .!= i] for i in 1:length(l)])))
 
 p2 = @chain df begin
     @transmute(list = to_int(split(Column1)))
-    @mutate(safe = check_sublists(list))
+    @mutate(safe = check_all(list))
     @pull(safe)
     sum
 end
