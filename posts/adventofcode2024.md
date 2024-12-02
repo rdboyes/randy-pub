@@ -51,4 +51,41 @@ Part 2 has more rough edges:
 
 On the plus side, I love the @aside macro more every time I use it and wish it existed in R as well.
 
+### Day 2
+
+Does it still count as "pure Tidier.jl" if you write functions outside of the chain? I'm going with yes.
+
+```julia
+df = read_csv("data/2.txt", col_names = false)
+
+to_int(x) = parse.(Int, x)
+check_safe(steps) = all(steps .> 0 .&& steps .<  4) ||
+                    all(steps .< 0 .&& steps .> -4)
+
+p1 = @chain df begin
+    @transmute(list = to_int(split(Column1)))
+    @mutate(steps = extrema(diff(list)))
+    @mutate(safe = check_safe(steps))
+    @pull(safe)
+    sum
+end
+
+println("Part 1: $p1")
+
+function check_sublists(list)
+    any(check_safe.(diff.([list[1:end .!= i] for i in 1:length(list)])))
+end
+
+p2 = @chain df begin
+    @transmute(list = to_int(split(Column1)))
+    @mutate(safe = check_sublists(list))
+    @pull(safe)
+    sum
+end
+
+println("Part 2: $p2")
+```
+
+One of the biggest struggles here was trying to get fine control of the exact vectorization of functions across list-columns with the Tidier toolbox. You can turn on and off vectorization, sure, but to write a solution to this problem I needed to vectorized *inside rows* and I don't know if that functionality exists or is fully developed. Using list comprehesion inside macros also doesn't seem possible, since you get errors related to the variable "i" and "end" if you try to use the "check_sublists" function inside a mutate.
+
 {{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27" }}
