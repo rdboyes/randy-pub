@@ -27,7 +27,7 @@
     <tr>
         <td scope="header" class="width-min">Updated</td>
         <td scope="header" class="width-auto">
-            <time> December 01, 2024</time>
+            <time> December 02, 2024</time>
         </td>
     </tr>
     <tr>
@@ -226,6 +226,37 @@ print(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</s
 </li>
 </ul>
 <p>On the plus side, I love the @aside macro more every time I use it and wish it existed in R as well.</p>
+<h3 id="day_2"><a href="#day_2" class="header-anchor">Day 2</a></h3>
+<p>Does it still count as &quot;pure Tidier.jl&quot; if you write functions outside of the chain? I&#39;m going with yes.</p>
+<pre><code class="julia hljs">df = read_csv(<span class="hljs-string">&quot;data/2.txt&quot;</span>, col_names = <span class="hljs-literal">false</span>)
+
+to_int(x) = parse.(<span class="hljs-built_in">Int</span>, x)
+check_safe(steps) = all(steps .&gt; <span class="hljs-number">0</span> .&amp;&amp; steps .&lt;  <span class="hljs-number">4</span>) ||
+                    all(steps .&lt; <span class="hljs-number">0</span> .&amp;&amp; steps .&gt; -<span class="hljs-number">4</span>)
+
+p1 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</span>
+    <span class="hljs-meta">@transmute</span>(list = to_int(split(Column1)))
+    <span class="hljs-meta">@mutate</span>(steps = extrema(diff(list)))
+    <span class="hljs-meta">@mutate</span>(safe = check_safe(steps))
+    <span class="hljs-meta">@pull</span>(safe)
+    sum
+<span class="hljs-keyword">end</span>
+
+println(<span class="hljs-string">&quot;Part 1: <span class="hljs-variable">$p1</span>&quot;</span>)
+
+<span class="hljs-keyword">function</span> check_sublists(list)
+    any(check_safe.(diff.([list[<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span> .!= i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(list)])))
+<span class="hljs-keyword">end</span>
+
+p2 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</span>
+    <span class="hljs-meta">@transmute</span>(list = to_int(split(Column1)))
+    <span class="hljs-meta">@mutate</span>(safe = check_sublists(list))
+    <span class="hljs-meta">@pull</span>(safe)
+    sum
+<span class="hljs-keyword">end</span>
+
+println(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</span>&quot;</span>)</code></pre>
+<p>One of the biggest struggles here was trying to get fine control of the exact vectorization of functions across list-columns with the Tidier toolbox. You can turn on and off vectorization, sure, but to write a solution to this problem I needed to vectorized <em>inside rows</em> and I don&#39;t know if that functionality exists or is fully developed. Using list comprehesion inside macros also doesn&#39;t seem possible, since you get errors related to the variable &quot;i&quot; and &quot;end&quot; if you try to use the &quot;check_sublists&quot; function inside a mutate.</p>
 
         <script src="../bsky-comments.js"></script>
         <bsky-comments post="at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27"></bsky-comments>
