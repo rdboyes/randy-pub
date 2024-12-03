@@ -27,7 +27,7 @@
     <tr>
         <td scope="header" class="width-min">Updated</td>
         <td scope="header" class="width-auto">
-            <time> December 02, 2024</time>
+            <time> December 03, 2024</time>
         </td>
     </tr>
     <tr>
@@ -255,6 +255,42 @@ p2 = <span class="hljs-meta">@chain</span> df <span class="hljs-keyword">begin</
 
 println(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</span>&quot;</span>)</code></pre>
 <p>One of the biggest struggles here was trying to get fine control of the exact vectorization of functions across list-columns with the Tidier toolbox. You can turn on and off vectorization, sure, but to write a solution to this problem I needed to vectorize <em>inside rows</em> and I don&#39;t know if that functionality exists or is fully developed. Using list comprehesion inside macros also doesn&#39;t seem possible, since you get errors related to the variable &quot;i&quot; and &quot;end&quot; if you try to use the &quot;check_all&quot; function inside a mutate.</p>
+<h3 id="day_3"><a href="#day_3" class="header-anchor">Day 3</a></h3>
+<p>The first regex problem of many&#33;</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">using</span> TidierStrings
+<span class="hljs-keyword">using</span> TidierData
+
+<span class="hljs-keyword">function</span> str_extract_all_cap(string::<span class="hljs-built_in">AbstractString</span>, pattern::<span class="hljs-built_in">Union</span>{<span class="hljs-built_in">String</span>, <span class="hljs-built_in">Regex</span>}; captures::<span class="hljs-built_in">Bool</span>=<span class="hljs-literal">false</span>)
+    regex_pattern = <span class="hljs-keyword">isa</span>(pattern, <span class="hljs-built_in">String</span>) ? <span class="hljs-built_in">Regex</span>(pattern) : pattern
+    to_missing(l) = [ifelse(isnothing(c), <span class="hljs-literal">missing</span>, c) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> l]
+    matches = captures ?
+        [to_missing(m.captures) <span class="hljs-keyword">for</span> m <span class="hljs-keyword">in</span> eachmatch(regex_pattern, string)] :
+        [<span class="hljs-built_in">String</span>(m.match) <span class="hljs-keyword">for</span> m <span class="hljs-keyword">in</span> eachmatch(regex_pattern, string)]
+    <span class="hljs-keyword">return</span> isempty(matches) ? <span class="hljs-literal">missing</span> : matches
+<span class="hljs-keyword">end</span>
+
+p1 = <span class="hljs-meta">@chain</span> *(readlines(<span class="hljs-string">&quot;data/3.txt&quot;</span>)...) <span class="hljs-keyword">begin</span>
+    str_extract_all_cap(<span class="hljs-string">r&quot;mul\((?&lt;n1&gt;\d+),(?&lt;n2&gt;\d+)\)&quot;</span>, captures = <span class="hljs-literal">true</span>)
+    map(x -&gt; prod(parse.(<span class="hljs-built_in">Int</span>, x)), _)
+    sum
+<span class="hljs-keyword">end</span>
+
+println(<span class="hljs-string">&quot;Part 1: <span class="hljs-variable">$p1</span>&quot;</span>)
+
+p2 = <span class="hljs-meta">@chain</span> *(readlines(<span class="hljs-string">&quot;data/3.txt&quot;</span>)...) <span class="hljs-keyword">begin</span>
+    str_extract_all_cap(<span class="hljs-string">r&quot;mul\((\d+),(\d+)\)|(do(?:n&#x27;t)?\(\))&quot;</span>, captures = <span class="hljs-literal">true</span>)
+    DataFrame(mapreduce(permutedims, vcat, _), :auto)
+    <span class="hljs-meta">@fill_missing</span>(x3, <span class="hljs-string">&quot;down&quot;</span>)
+    <span class="hljs-meta">@mutate</span>(x3 = replace_missing(x3, <span class="hljs-string">&quot;do()&quot;</span>))
+    <span class="hljs-meta">@filter</span>(x3 != <span class="hljs-string">&quot;don&#x27;t()&quot;</span>)
+    <span class="hljs-meta">@mutate</span>(prod = as_integer(x1) * as_integer(x2))
+    <span class="hljs-meta">@filter</span>(!ismissing(prod))
+    <span class="hljs-meta">@pull</span>(prod)
+    sum
+<span class="hljs-keyword">end</span>
+
+println(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</span>&quot;</span>)</code></pre>
+<p>TidierStrings.str<em>extract</em>all doesn&#39;t &#40;currently&#33; PR submitted&#41; support capture groups so I wrote a version that does. Otherwise this is kind of a &quot;classic&quot; AoC regex problem, nothing too difficult. Something tells me Day 4 is going to be difficult...</p>
 
         <script src="../bsky-comments.js"></script>
         <bsky-comments post="at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27"></bsky-comments>
