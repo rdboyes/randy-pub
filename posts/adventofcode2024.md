@@ -86,4 +86,47 @@ println("Part 2: $p2")
 
 One of the biggest struggles here was trying to get fine control of the exact vectorization of functions across list-columns with the Tidier toolbox. You can turn on and off vectorization, sure, but to write a solution to this problem I needed to vectorize *inside rows* and I don't know if that functionality exists or is fully developed. Using list comprehesion inside macros also doesn't seem possible, since you get errors related to the variable "i" and "end" if you try to use the "check_all" function inside a mutate.
 
+### Day 3
+
+The first regex problem of many!
+
+```julia
+using TidierStrings
+using TidierData
+
+function str_extract_all_cap(string::AbstractString, pattern::Union{String, Regex}; captures::Bool=false)
+    regex_pattern = isa(pattern, String) ? Regex(pattern) : pattern
+    to_missing(l) = [ifelse(isnothing(c), missing, c) for c in l]
+    matches = captures ?
+        [to_missing(m.captures) for m in eachmatch(regex_pattern, string)] :
+        [String(m.match) for m in eachmatch(regex_pattern, string)]
+    return isempty(matches) ? missing : matches
+end
+
+p1 = @chain *(readlines("data/3.txt")...) begin
+    str_extract_all_cap(r"mul\((?<n1>\d+),(?<n2>\d+)\)", captures = true)
+    map(x -> prod(parse.(Int, x)), _)
+    sum
+end
+
+println("Part 1: $p1")
+
+p2 = @chain *(readlines("data/3.txt")...) begin
+    str_extract_all_cap(r"mul\((\d+),(\d+)\)|(do(?:n't)?\(\))", captures = true)
+    DataFrame(mapreduce(permutedims, vcat, _), :auto)
+    @fill_missing(x3, "down")
+    @mutate(x3 = replace_missing(x3, "do()"))
+    @filter(x3 != "don't()")
+    @mutate(prod = as_integer(x1) * as_integer(x2))
+    @filter(!ismissing(prod))
+    @pull(prod)
+    sum
+end
+
+println("Part 2: $p2")
+```
+
+TidierStrings.str_extract_all doesn't (currently! PR submitted) support capture groups so I wrote a version that does. Otherwise this is kind of a "classic" AoC regex problem, nothing too difficult. Something tells me Day 4 is going to be difficult...
+
+
 {{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27" }}
