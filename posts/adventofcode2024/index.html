@@ -27,7 +27,7 @@
     <tr>
         <td scope="header" class="width-min">Updated</td>
         <td scope="header" class="width-auto">
-            <time> December 03, 2024</time>
+            <time> December 04, 2024</time>
         </td>
     </tr>
     <tr>
@@ -290,7 +290,57 @@ p2 = <span class="hljs-meta">@chain</span> *(readlines(<span class="hljs-string"
 <span class="hljs-keyword">end</span>
 
 println(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</span>&quot;</span>)</code></pre>
-<p>TidierStrings.str<em>extract</em>all doesn&#39;t &#40;currently&#33; PR submitted&#41; support capture groups so I wrote a version that does. Otherwise this is kind of a &quot;classic&quot; AoC regex problem, nothing too difficult. Something tells me Day 4 is going to be difficult...</p>
+<p>TidierStrings.str&#95;extract&#95;all doesn&#39;t &#40;currently&#33; PR submitted&#41; support capture groups so I wrote a version that does. Otherwise this is kind of a &quot;classic&quot; AoC regex problem, nothing too difficult. Something tells me Day 4 is going to be difficult...</p>
+<h3 id="day_4"><a href="#day_4" class="header-anchor">Day 4</a></h3>
+<pre><code class="julia hljs"><span class="hljs-keyword">using</span> TidierStrings
+
+text = readlines(<span class="hljs-string">&quot;data/4.txt&quot;</span>)
+nl = length(text)
+ts = split.(text, <span class="hljs-string">&quot;&quot;</span>)
+
+fb = text
+ud = reduce(*, reduce(hcat, ts), dims = <span class="hljs-number">2</span>)
+diag1 = [[ts[x][y] <span class="hljs-keyword">for</span> (x, y) <span class="hljs-keyword">in</span> Iterators.product(<span class="hljs-number">1</span>:nl, <span class="hljs-number">1</span>:nl) <span class="hljs-keyword">if</span> x + y == z] <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> <span class="hljs-number">2</span>:(nl*<span class="hljs-number">2</span>)]
+diag2 = [[ts[x][y] <span class="hljs-keyword">for</span> (x, y) <span class="hljs-keyword">in</span> Iterators.product(<span class="hljs-number">1</span>:nl, <span class="hljs-number">1</span>:nl) <span class="hljs-keyword">if</span> x - y == z]
+    <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> (nl-<span class="hljs-number">1</span>):-<span class="hljs-number">1</span>:(-(nl-<span class="hljs-number">1</span>))]
+
+<span class="hljs-keyword">function</span> str_count_overlap(column, pattern::<span class="hljs-built_in">Union</span>{<span class="hljs-built_in">String</span>,<span class="hljs-built_in">Regex</span>}; overlap::<span class="hljs-built_in">Bool</span>=<span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">if</span> ismissing(column)
+        <span class="hljs-keyword">return</span> (column)
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-keyword">if</span> pattern <span class="hljs-keyword">isa</span> <span class="hljs-built_in">String</span>
+        pattern = <span class="hljs-built_in">Regex</span>(pattern) <span class="hljs-comment"># treat pattern as regular expression</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-comment"># Count the number of matches for the regular expression</span>
+    <span class="hljs-keyword">return</span> length(collect(eachmatch(pattern, column, overlap = overlap)))
+<span class="hljs-keyword">end</span>
+
+p1 = sum(vcat(
+    str_count_overlap.(text, <span class="hljs-string">&quot;XMAS|SAMX&quot;</span>, overlap=<span class="hljs-literal">true</span>),
+    str_count_overlap.(ud, <span class="hljs-string">&quot;XMAS|SAMX&quot;</span>, overlap=<span class="hljs-literal">true</span>),
+    str_count_overlap.(map(x -&gt; *(x...), diag1), <span class="hljs-string">&quot;XMAS|SAMX&quot;</span>, overlap=<span class="hljs-literal">true</span>),
+    str_count_overlap.(map(x -&gt; *(x...), diag2), <span class="hljs-string">&quot;XMAS|SAMX&quot;</span>, overlap=<span class="hljs-literal">true</span>)
+))
+
+println(<span class="hljs-string">&quot;Part 1: <span class="hljs-variable">$p1</span>&quot;</span>)
+
+mat = reduce(hcat, ts)
+
+<span class="hljs-keyword">function</span> is_x_mas(g)
+    g[<span class="hljs-number">2</span>,<span class="hljs-number">2</span>] != <span class="hljs-string">&quot;A&quot;</span> &amp;&amp; <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    sum([g[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>], g[<span class="hljs-number">1</span>,<span class="hljs-number">3</span>], g[<span class="hljs-number">3</span>,<span class="hljs-number">1</span>], g[<span class="hljs-number">3</span>,<span class="hljs-number">3</span>]] .== <span class="hljs-string">&quot;S&quot;</span>) != <span class="hljs-number">2</span> &amp;&amp; <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    sum([g[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>], g[<span class="hljs-number">1</span>,<span class="hljs-number">3</span>], g[<span class="hljs-number">3</span>,<span class="hljs-number">1</span>], g[<span class="hljs-number">3</span>,<span class="hljs-number">3</span>]] .== <span class="hljs-string">&quot;M&quot;</span>) != <span class="hljs-number">2</span> &amp;&amp; <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    (g[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>] == g[<span class="hljs-number">3</span>,<span class="hljs-number">3</span>] || g[<span class="hljs-number">1</span>,<span class="hljs-number">3</span>] == g[<span class="hljs-number">3</span>,<span class="hljs-number">1</span>]) &amp;&amp; <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+<span class="hljs-keyword">end</span>
+
+p2 = sum([is_x_mas(mat[((cx-<span class="hljs-number">1</span>):(cx+<span class="hljs-number">1</span>), (cy-<span class="hljs-number">1</span>):(cy+<span class="hljs-number">1</span>))...]) <span class="hljs-keyword">for</span>
+    (cx, cy) <span class="hljs-keyword">in</span> Iterators.product(<span class="hljs-number">2</span>:(nl-<span class="hljs-number">1</span>),<span class="hljs-number">2</span>:(nl-<span class="hljs-number">1</span>))])
+
+println(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</span>&quot;</span>)</code></pre>
+<p>Another AoC classic, a &quot;grid problem&quot;, and another improvement for TidierStrings to submit as a PR&#33; Julia&#39;s eachmatch function allows for overlaps, no reason not to allow the overlap Bool to pass through from str_count.</p>
 
         <script src="../bsky-comments.js"></script>
         <bsky-comments post="at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27"></bsky-comments>
