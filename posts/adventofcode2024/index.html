@@ -299,10 +299,20 @@ nl = length(text)
 ts = split.(text, <span class="hljs-string">&quot;&quot;</span>)
 
 fb = text
+
 ud = reduce(*, reduce(hcat, ts), dims = <span class="hljs-number">2</span>)
-diag1 = [[ts[x][y] <span class="hljs-keyword">for</span> (x, y) <span class="hljs-keyword">in</span> Iterators.product(<span class="hljs-number">1</span>:nl, <span class="hljs-number">1</span>:nl) <span class="hljs-keyword">if</span> x + y == z] <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> <span class="hljs-number">2</span>:(nl*<span class="hljs-number">2</span>)]
-diag2 = [[ts[x][y] <span class="hljs-keyword">for</span> (x, y) <span class="hljs-keyword">in</span> Iterators.product(<span class="hljs-number">1</span>:nl, <span class="hljs-number">1</span>:nl) <span class="hljs-keyword">if</span> x - y == z]
-    <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> (nl-<span class="hljs-number">1</span>):-<span class="hljs-number">1</span>:(-(nl-<span class="hljs-number">1</span>))]
+
+diag1 = [
+    [ts[x][y] <span class="hljs-keyword">for</span> (x, y) <span class="hljs-keyword">in</span>
+    Iterators.product(<span class="hljs-number">1</span>:nl, <span class="hljs-number">1</span>:nl) <span class="hljs-keyword">if</span> x + y == z]
+    <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> <span class="hljs-number">2</span>:(nl*<span class="hljs-number">2</span>)
+]
+
+diag2 = [
+    [ts[x][y] <span class="hljs-keyword">for</span> (x, y) <span class="hljs-keyword">in</span>
+    Iterators.product(<span class="hljs-number">1</span>:nl, <span class="hljs-number">1</span>:nl) <span class="hljs-keyword">if</span> x - y == z]
+    <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> (nl-<span class="hljs-number">1</span>):-<span class="hljs-number">1</span>:(-(nl-<span class="hljs-number">1</span>))
+]
 
 <span class="hljs-keyword">function</span> str_count_overlap(column, pattern::<span class="hljs-built_in">Union</span>{<span class="hljs-built_in">String</span>,<span class="hljs-built_in">Regex</span>}; overlap::<span class="hljs-built_in">Bool</span>=<span class="hljs-literal">false</span>)
     <span class="hljs-keyword">if</span> ismissing(column)
