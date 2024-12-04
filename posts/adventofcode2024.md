@@ -138,10 +138,20 @@ nl = length(text)
 ts = split.(text, "")
 
 fb = text
+
 ud = reduce(*, reduce(hcat, ts), dims = 2)
-diag1 = [[ts[x][y] for (x, y) in Iterators.product(1:nl, 1:nl) if x + y == z] for z in 2:(nl*2)]
-diag2 = [[ts[x][y] for (x, y) in Iterators.product(1:nl, 1:nl) if x - y == z]
-    for z in (nl-1):-1:(-(nl-1))]
+
+diag1 = [
+    [ts[x][y] for (x, y) in
+    Iterators.product(1:nl, 1:nl) if x + y == z]
+    for z in 2:(nl*2)
+]
+
+diag2 = [
+    [ts[x][y] for (x, y) in
+    Iterators.product(1:nl, 1:nl) if x - y == z]
+    for z in (nl-1):-1:(-(nl-1))
+]
 
 function str_count_overlap(column, pattern::Union{String,Regex}; overlap::Bool=false)
     if ismissing(column)
