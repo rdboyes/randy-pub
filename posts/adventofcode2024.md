@@ -193,4 +193,24 @@ println("Part 2: $p2")
 
 Another AoC classic, a "grid problem", and another improvement for TidierStrings to submit as a PR! Julia's eachmatch function allows for overlaps, no reason not to allow the overlap Bool to pass through from str_count.
 
+### Day 5
+
+One of those days where you hit Part 2 and just think ... not today. Happy enough with my part one, although it is very light on the Tidier.jl.
+
+```julia
+data = readlines("data/5.txt")
+div = findall(data .== "")[1]
+
+to_int(x) = parse.(Int, x)
+rules = to_int.(split.(data[1:(div-1)], "|"))
+pages = to_int.(split.(data[(div+1):end], ","))
+
+check_rules(p, rl) = ifelse(
+    any([r ⊆ p && !all(p ∩ r .== r) for r in rl]),
+    0, p[ceil(Int, end/2)])
+
+println("Part 1: $(sum(check_rules.(pages, (rules, ))))")
+```
+
+
 {{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27" }}
