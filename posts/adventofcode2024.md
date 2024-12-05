@@ -195,7 +195,7 @@ Another AoC classic, a "grid problem", and another improvement for TidierStrings
 
 ### Day 5
 
-One of those days where you hit Part 2 and just think ... not today. Happy enough with my part one, although it is very light on the Tidier.jl.
+One of those days where you hit Part 2 and just think ... not today. Happy enough with my part one, although it is very light on the Tidier.jl. *(edit: saw a hint about custom sort functions on BlueSky and finished it off)*
 
 ```julia
 data = readlines("data/5.txt")
@@ -207,9 +207,16 @@ pages = to_int.(split.(data[(div+1):end], ","))
 
 check_rules(p, rl) = ifelse(
     any([r ⊆ p && !all(p ∩ r .== r) for r in rl]),
-    0, p[ceil(Int, end/2)])
+    0, p[ceil(Int, end / 2)])
 
-println("Part 1: $(sum(check_rules.(pages, (rules, ))))")
+p1 = sum(check_rules.(pages, (rules,)))
+
+println("Part 1: $p1")
+
+rulesort(x, y) = [x, y] in rules
+p2 = sum(check_rules.(sort.(pages, lt=rulesort), (rules,))) - p1
+
+println("Part 1: $p2")
 ```
 
 
