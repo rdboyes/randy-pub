@@ -27,7 +27,7 @@
     <tr>
         <td scope="header" class="width-min">Updated</td>
         <td scope="header" class="width-auto">
-            <time> December 04, 2024</time>
+            <time> December 05, 2024</time>
         </td>
     </tr>
     <tr>
@@ -351,6 +351,20 @@ p2 = sum([is_x_mas(mat[((cx-<span class="hljs-number">1</span>):(cx+<span class=
 
 println(<span class="hljs-string">&quot;Part 2: <span class="hljs-variable">$p2</span>&quot;</span>)</code></pre>
 <p>Another AoC classic, a &quot;grid problem&quot;, and another improvement for TidierStrings to submit as a PR&#33; Julia&#39;s eachmatch function allows for overlaps, no reason not to allow the overlap Bool to pass through from str_count.</p>
+<h3 id="day_5"><a href="#day_5" class="header-anchor">Day 5</a></h3>
+<p>One of those days where you hit Part 2 and just think ... not today. Happy enough with my part one, although it is very light on the Tidier.jl.</p>
+<pre><code class="julia hljs">data = readlines(<span class="hljs-string">&quot;data/5.txt&quot;</span>)
+div = findall(data .== <span class="hljs-string">&quot;&quot;</span>)[<span class="hljs-number">1</span>]
+
+to_int(x) = parse.(<span class="hljs-built_in">Int</span>, x)
+rules = to_int.(split.(data[<span class="hljs-number">1</span>:(div-<span class="hljs-number">1</span>)], <span class="hljs-string">&quot;|&quot;</span>))
+pages = to_int.(split.(data[(div+<span class="hljs-number">1</span>):<span class="hljs-keyword">end</span>], <span class="hljs-string">&quot;,&quot;</span>))
+
+check_rules(p, rl) = ifelse(
+    any([r ⊆ p &amp;&amp; !all(p ∩ r .== r) <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> rl]),
+    <span class="hljs-number">0</span>, p[ceil(<span class="hljs-built_in">Int</span>, <span class="hljs-keyword">end</span>/<span class="hljs-number">2</span>)])
+
+println(<span class="hljs-string">&quot;Part 1: <span class="hljs-subst">$(sum(check_rules.(pages, (rules, )</span>)))&quot;</span>)</code></pre>
 
         <script src="../bsky-comments.js"></script>
         <bsky-comments post="at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27"></bsky-comments>

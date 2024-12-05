@@ -1,2 +1,2 @@
-ArgumentError: Package TidierData not found in current path.
-- Run `import Pkg; Pkg.add("TidierData")` to install the TidierData package.
+UndefVarError: `belowzero` not defined in `TidierData`
+Suggestion: check for spelling errors or missing imports.
