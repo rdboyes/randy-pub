@@ -219,5 +219,69 @@ p2 = sum(check_rules.(sort.(pages, lt=rulesort), (rules,))) - p1
 println("Part 1: $p2")
 ```
 
+### Day 6
+
+Brute force implementation. It works, but it is sloooooow. One to revisit, I suspect a ton of optimizations are possible.
+
+```julia
+data = permutedims(reduce(hcat, split.(readlines("data/6.txt"), "")))
+side_length = size(data, 1)
+dir_list = [[-1,0], [0, 1], [1, 0], [0, -1]]
+ci = findfirst(i -> i == "^", data)
+
+function check_path(pos, dir, path_history, data)
+    dir_vector = dir_list[(dir%4)+1]
+    if (pos, dir_vector) in path_history
+        return (:looped, path_history)
+    else
+        push!(path_history, (pos, dir_vector))
+    end
+    if any(1 .> pos .+ dir_vector) || any(pos .+ dir_vector .> side_length)
+        return (:escaped, path_history)
+    end
+    if data[(pos .+ dir_vector)...] == "#"
+        return (:blocked, path_history)
+    end
+    return (:clear, path_history)
+end
+
+function findpath(grid; block = nothing)
+    pos = [ci[1], ci[2]]
+    dir = 0
+    path_history = []
+    path = :clear
+
+    if !isnothing(block)
+        grid[block...] = "#"
+    end
+
+    while !(path in [:escaped, :looped])
+        path, path_history = check_path(pos, dir, path_history, grid)
+        if path == :blocked
+            dir = dir + 1
+        elseif path == :clear
+            pos = pos .+ dir_list[(dir%4)+1]
+        end
+    end
+
+    return (path, path_history)
+end
+
+status, clear_path = findpath(data)
+p1_path_positions = unique([p[1] for p in clear_path])
+
+println("Part 1: $(length(p1_path_positions))")
+
+status_list = []
+possible_blocks = [p[1] .+ p[2] for p in clear_path[1:(end-1)]]
+
+for block in unique(possible_blocks)
+    p2status, p2paths = findpath(copy(data); block = block)
+    push!(status_list, p2status)
+end
+
+println("Part 2: $(length([s for s in status_list if s == :looped]))")
+```
+
 
 {{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27" }}
