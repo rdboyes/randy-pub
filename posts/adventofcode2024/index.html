@@ -27,7 +27,7 @@
     <tr>
         <td scope="header" class="width-min">Updated</td>
         <td scope="header" class="width-auto">
-            <time> December 06, 2024</time>
+            <time> December 07, 2024</time>
         </td>
     </tr>
     <tr>
@@ -431,6 +431,48 @@ possible_blocks = [p[<span class="hljs-number">1</span>] .+ p[<span class="hljs-
 <span class="hljs-keyword">end</span>
 
 println(<span class="hljs-string">&quot;Part 2: <span class="hljs-subst">$(length([s <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> status_list <span class="hljs-keyword">if</span> s == :looped])</span>)&quot;</span>)</code></pre>
+<h3 id="day_7"><a href="#day_7" class="header-anchor">Day 7</a></h3>
+<p>Not super optimized, but much faster than my initial version that tried to actually pass lists of functions. Fast enough to get the answer to both parts in 10 seconds or so, and I&#39;m tired of playing with this one...</p>
+<pre><code class="julia hljs">as_int(x) = parse.(<span class="hljs-built_in">Int</span>, x)
+ci(a, b) = parse(<span class="hljs-built_in">Int</span>, <span class="hljs-string">&quot;<span class="hljs-variable">$a</span><span class="hljs-variable">$b</span>&quot;</span>)
+
+<span class="hljs-keyword">function</span> apply_op(total, next_op)
+    <span class="hljs-keyword">if</span> next_op[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;+&#x27;</span>
+        <span class="hljs-keyword">return</span> +(total, next_op[<span class="hljs-number">2</span>])
+    <span class="hljs-keyword">elseif</span> next_op[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;*&#x27;</span>
+        <span class="hljs-keyword">return</span> *(total, next_op[<span class="hljs-number">2</span>])
+    <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">return</span> ci(total, next_op[<span class="hljs-number">2</span>])
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> possibles(l, t, possible_ops)
+    println(<span class="hljs-string">&quot;checking <span class="hljs-variable">$t</span>&quot;</span>)
+    op_list = possible_ops == :p1 ?
+              Iterators.product(fill([<span class="hljs-string">&#x27;+&#x27;</span>, <span class="hljs-string">&#x27;*&#x27;</span>], length(l) - <span class="hljs-number">1</span>)...) :
+              Iterators.filter((x -&gt; <span class="hljs-string">&#x27;c&#x27;</span> <span class="hljs-keyword">in</span> x),
+        Iterators.product(fill([<span class="hljs-string">&#x27;+&#x27;</span>, <span class="hljs-string">&#x27;*&#x27;</span>, <span class="hljs-string">&#x27;c&#x27;</span>], length(l) - <span class="hljs-number">1</span>)...))
+
+    <span class="hljs-keyword">for</span> ops <span class="hljs-keyword">in</span> op_list
+        foldl(apply_op, zip(ops, l[<span class="hljs-number">2</span>:<span class="hljs-keyword">end</span>]), init=l[<span class="hljs-number">1</span>]) == t &amp;&amp; <span class="hljs-keyword">return</span> t
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> solve()
+    input = split.(readlines(<span class="hljs-string">&quot;data/7.txt&quot;</span>), <span class="hljs-string">&quot;: &quot;</span>)
+    nums = as_int.([split(i[<span class="hljs-number">2</span>], <span class="hljs-string">&quot; &quot;</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> input])
+    targets = as_int([i[<span class="hljs-number">1</span>] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> input])
+    p1 = [possibles(l, t, :p1) <span class="hljs-keyword">for</span> (t, l) <span class="hljs-keyword">in</span> zip(targets, nums)]
+    p2 = [possibles(l, t, :p2) <span class="hljs-keyword">for</span> (t, l) <span class="hljs-keyword">in</span>
+          zip(targets[p1.==<span class="hljs-number">0</span>], nums[p1.==<span class="hljs-number">0</span>])]
+    <span class="hljs-keyword">return</span> (sum(p1), sum(p2))
+<span class="hljs-keyword">end</span>
+
+ans = solve()
+
+println(<span class="hljs-string">&quot;Part 1: <span class="hljs-subst">$(ans[<span class="hljs-number">1</span>])</span>&quot;</span>)
+println(<span class="hljs-string">&quot;Part 2: <span class="hljs-subst">$(ans[<span class="hljs-number">1</span>]+ans[<span class="hljs-number">2</span>])</span>&quot;</span>)</code></pre>
 
         <script src="../bsky-comments.js"></script>
         <bsky-comments post="at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27"></bsky-comments>
