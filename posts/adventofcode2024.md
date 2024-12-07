@@ -283,5 +283,51 @@ end
 println("Part 2: $(length([s for s in status_list if s == :looped]))")
 ```
 
+### Day 7
+
+Not super optimized, but much faster than my initial version that tried to actually pass lists of functions. Fast enough to get the answer to both parts in 10 seconds or so, and I'm tired of playing with this one...
+
+```julia
+as_int(x) = parse.(Int, x)
+ci(a, b) = parse(Int, "$a$b")
+
+function apply_op(total, next_op)
+    if next_op[1] == '+'
+        return +(total, next_op[2])
+    elseif next_op[1] == '*'
+        return *(total, next_op[2])
+    else
+        return ci(total, next_op[2])
+    end
+end
+
+function possibles(l, t, possible_ops)
+    println("checking $t")
+    op_list = possible_ops == :p1 ?
+              Iterators.product(fill(['+', '*'], length(l) - 1)...) :
+              Iterators.filter((x -> 'c' in x),
+        Iterators.product(fill(['+', '*', 'c'], length(l) - 1)...))
+
+    for ops in op_list
+        foldl(apply_op, zip(ops, l[2:end]), init=l[1]) == t && return t
+    end
+    return 0
+end
+
+function solve()
+    input = split.(readlines("data/7.txt"), ": ")
+    nums = as_int.([split(i[2], " ") for i in input])
+    targets = as_int([i[1] for i in input])
+    p1 = [possibles(l, t, :p1) for (t, l) in zip(targets, nums)]
+    p2 = [possibles(l, t, :p2) for (t, l) in
+          zip(targets[p1.==0], nums[p1.==0])]
+    return (sum(p1), sum(p2))
+end
+
+ans = solve()
+
+println("Part 1: $(ans[1])")
+println("Part 2: $(ans[1]+ans[2])")
+```
 
 {{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27" }}
