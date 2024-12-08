@@ -330,4 +330,13 @@ println("Part 1: $(ans[1])")
 println("Part 2: $(ans[1]+ans[2])")
 ```
 
+### Summary
+
+Not every problem works well with Tidier packages, but we got a few issues and PRs in:
+
+- [Bug fix in @separate_rows] (https://github.com/TidierOrg/TidierData.jl/issues/125)
+- [Join syntax](https://github.com/TidierOrg/TidierData.jl/issues/126)
+- [Allow overlaps in str_count](https://github.com/TidierOrg/TidierStrings.jl/pull/23)
+- [Allow capture groups in str_extract](https://github.com/TidierOrg/TidierStrings.jl/pull/22)
+
 {{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3lcbbseb55c27" }}
