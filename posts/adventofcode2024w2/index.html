@@ -27,7 +27,7 @@
     <tr>
         <td scope="header" class="width-min">Updated</td>
         <td scope="header" class="width-auto">
-            <time> December 08, 2024</time>
+            <time> December 10, 2024</time>
         </td>
     </tr>
     <tr>
@@ -223,6 +223,98 @@ gcd_dir(x) = <span class="hljs-built_in">CartesianIndex</span>(x[<span class="hl
 
 println(<span class="hljs-string">&quot;Part 1: <span class="hljs-subst">$(length(nodesp1)</span>)&quot;</span>)
 println(<span class="hljs-string">&quot;Part 2: <span class="hljs-subst">$(length(union(nodesp1, nodesp2, antennas)</span>))&quot;</span>)</code></pre>
+<h3 id="day_9"><a href="#day_9" class="header-anchor">Day 9</a></h3>
+<p>Still struggling with Part 2 on this one.</p>
+<pre><code class="julia hljs">to_int(x) = parse.(<span class="hljs-built_in">Int</span>, x)
+d = to_int(split.(readline(<span class="hljs-string">&quot;data/9test1.txt&quot;</span>), <span class="hljs-string">&quot;&quot;</span>))
+
+<span class="hljs-keyword">function</span> solve(d)
+    c1 = <span class="hljs-number">1</span>
+    c2 = length(d)
+    total = <span class="hljs-number">0</span>
+    count = <span class="hljs-number">0</span>
+
+    <span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">if</span> c1 % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>
+            <span class="hljs-keyword">if</span> d[c2] &lt;= d[c1]
+                d[c1] -= d[c2]
+                new_count = count + d[c2]
+                total += (c2 ÷ <span class="hljs-number">2</span>) * sum(count:(new_count-<span class="hljs-number">1</span>))
+                <span class="hljs-keyword">if</span> d[c1] == <span class="hljs-number">0</span>
+                    c1 += <span class="hljs-number">1</span>
+                <span class="hljs-keyword">end</span>
+                c2 -= <span class="hljs-number">2</span>
+                count = new_count
+            <span class="hljs-keyword">else</span>
+                d[c2] -= d[c1]
+                new_count = count + d[c1]
+                total += (c2 ÷ <span class="hljs-number">2</span>) * sum(count:(new_count-<span class="hljs-number">1</span>))
+                c1 += <span class="hljs-number">1</span>
+                count = new_count
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">else</span>
+            new_count = count + d[c1]
+            total += (c1 ÷ <span class="hljs-number">2</span>) * sum(count:(new_count-<span class="hljs-number">1</span>))
+            count = new_count
+            c1 += <span class="hljs-number">1</span>
+        <span class="hljs-keyword">end</span>
+        c1 &gt; c2 &amp;&amp; <span class="hljs-keyword">break</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-keyword">return</span> total
+<span class="hljs-keyword">end</span>
+
+println(solve(d))</code></pre>
+<h3 id="day_10"><a href="#day_10" class="header-anchor">Day 10</a></h3>
+<p>First graph problem&#33; I found julia&#39;s Graphs.jl package to be much smoother to work with than R&#39;s igraph, once I understood what it wanted. Most of the code is setup, once the graph is created the solution is easy.</p>
+<pre><code class="julia hljs">to_int(x) = parse.(<span class="hljs-built_in">Int8</span>, x)
+
+data = permutedims(
+    reduce(hcat, to_int.(split.(readlines(<span class="hljs-string">&quot;data/10.txt&quot;</span>), <span class="hljs-string">&quot;&quot;</span>)))
+)
+
+side_length = size(data)[<span class="hljs-number">1</span>]
+
+in_bounds(x) = all([i &gt; <span class="hljs-number">0</span> &amp;&amp; i &lt;= side_length <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">Tuple</span>(x)])
+
+neighbor_dirs = [
+    <span class="hljs-built_in">CartesianIndex</span>(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>),
+    <span class="hljs-built_in">CartesianIndex</span>(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>),
+    <span class="hljs-built_in">CartesianIndex</span>(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>),
+    <span class="hljs-built_in">CartesianIndex</span>(-<span class="hljs-number">1</span>, <span class="hljs-number">0</span>)
+]
+
+<span class="hljs-keyword">using</span> Graphs
+
+c2i = <span class="hljs-built_in">Dict</span>(c =&gt; i <span class="hljs-keyword">for</span> (c, i) <span class="hljs-keyword">in</span> zip(<span class="hljs-built_in">CartesianIndices</span>(data), eachindex(data)))
+
+g = DiGraph()
+
+add_vertices!(g, side_length^<span class="hljs-number">2</span>)
+
+<span class="hljs-keyword">for</span> point <span class="hljs-keyword">in</span> <span class="hljs-built_in">CartesianIndices</span>(data)
+    <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> neighbor_dirs
+        <span class="hljs-keyword">if</span> in_bounds(n + point)
+            <span class="hljs-keyword">if</span> data[n + point] == data[point] + <span class="hljs-number">1</span>
+                add_edge!(g, c2i[point], c2i[n+point])
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+pathsp1 = <span class="hljs-built_in">Bool</span>[]
+pathsp2 = <span class="hljs-built_in">Int</span>[]
+
+<span class="hljs-keyword">for</span> (v0, v9) <span class="hljs-keyword">in</span> Iterators.product(
+    [c2i[c] <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> (findall(x -&gt; x == <span class="hljs-number">0</span>, data))],
+    [c2i[c] <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> (findall(x -&gt; x == <span class="hljs-number">9</span>, data))])
+
+    push!(pathsp1, has_path(g, v0, v9))
+    push!(pathsp2, length(collect(all_simple_paths(g, v0, v9))))
+<span class="hljs-keyword">end</span>
+
+println(sum(pathsp1))
+print(sum(pathsp2))</code></pre>
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
     <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the
