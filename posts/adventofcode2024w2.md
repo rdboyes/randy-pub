@@ -151,9 +151,68 @@ println(sum(pathsp1))
 print(sum(pathsp2))
 ```
 
+## Day 11
+
+Ended up using two completely different approaches for parts 1 and 2. The memoized recursion approach here works really quickly for part 1, but self-destructs when you try it for part 2. The dict-based approach is slower but still finishes p2 in 8 milliseconds so who's complaining...
+
+```julia
+using Memoization
+
+initial = [64599, 31, 674832, 2659361, 1, 0, 8867, 321]
+
+@memoize function split_once(n)
+    n == 0 && return [1]
+    dn = digits(n)
+    ln = length(dn)
+    if isodd(ln)
+        return [2024n]
+    else
+        n1 = floor(Int, n / (10^(ln ÷ 2)))
+        n2 = n - n1 * 10^(ln ÷ 2)
+        return [n1, n2]
+    end
+end
+
+@memoize function split(n, iter)
+    if iter == 1
+        return split_once(n)
+    else
+        return_value = Int[]
+        for ni in split_once(n)
+            append!(return_value, split(ni, iter - 1))
+        end
+        return return_value
+    end
+end
+
+@btime sum(length.(split.(initial, 25)))
+
+function split_dict_once(stone_dict)
+    new_dict = Dict{Int,Int}()
+    for (k, v) in stone_dict
+        for r in split_once(k)
+            current = get(new_dict, r, 0)
+            new_dict[r] = current + v
+        end
+    end
+    return new_dict
+end
+
+function solvep2(initial, iter)
+    initial_dict = Dict(v => 1 for v in initial)
+    for i in 1:iter
+        initial_dict = split_dict_once(initial_dict)
+    end
+    return sum(values(initial_dict))
+end
+
+solvep2(initial, 75)
+```
+
+
 ## Day 13
 
-Pretty clean solution for Day 13. Don't love the round/asinteger solution but floating point problems were causing headaches.
+Pretty clean solution for Day 13. Don't love the round/isinteger solution but floating point problems were causing headaches.
 
 ```julia
 inst = readlines("data/13.txt")
