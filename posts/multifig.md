@@ -40,6 +40,7 @@ data <- tibble(
 ```{r, results = "hide"}
 out = NULL
 for(q in unique(data$q)){
+    question <- q
     out <- c(out, knitr::knit_child("child.qmd"))
 }
 ```
@@ -64,7 +65,7 @@ dist = case_when(
 Some random data from the `r dist` distribution.
 
 ```{r}
-ggplot(filter(data, q == q)) +
+ggplot(filter(data, q == question)) +
     geom_histogram(aes(x = v))
 ```
 `````
