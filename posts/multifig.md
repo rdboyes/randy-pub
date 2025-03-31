@@ -40,7 +40,6 @@ data <- tibble(
 ```{r, results = "hide"}
 out = NULL
 for(q in unique(data$q)){
-    question <- q
     out <- c(out, knitr::knit_child("child.qmd"))
 }
 ```
@@ -53,7 +52,7 @@ cat(paste(out, collapse="\n") )
 ## child.qmd
 
 `````txt
-# Question `r question`
+# Question `r q`
 
 ```{r, results = "hide"}
 dist = case_when(
@@ -62,10 +61,10 @@ dist = case_when(
   TRUE ~ "Exponential")
 ```
 
-Here's some text, it could talk about the distribution that the data came from, which in this case is the `r dist`.
+Some random data from the `r dist` distribution.
 
 ```{r}
-ggplot(filter(data, q == question)) +
+ggplot(filter(data, q == q)) +
     geom_histogram(aes(x = v))
 ```
 `````
