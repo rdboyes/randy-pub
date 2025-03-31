@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="/css/basic.css" />
         <link rel="icon" href="/assets/favicon.png" />
         
-        <title>randy.pub</title>
+        <title>Knitting Quarto Docs with a Dynamic Number of Figures</title>
         
     </head>
     <body>
@@ -185,55 +185,64 @@
         onDebugToggle();
     </script>
 </html>
-<div class="franklin-content"><pre><code class="julia hljs"><span class="hljs-keyword">using</span> DataFrames
-<span class="hljs-keyword">using</span> TidierData
+<div class="franklin-content"><h2 id="goal"><a href="#goal" class="header-anchor">Goal</a></h2>
+<p>Inspired by a post I saw on Bluesky, what is the easiest way to knit a quarto document that contains a dynamic number of figures - e.g. a plot for each question in a survey?</p>
+<h2 id="solution"><a href="#solution" class="header-anchor">Solution</a></h2>
+<p>The best way I&#39;ve found is to use two files: one for the main document, and one that will serve as the &quot;template&quot; for the figures. The main document will have a loop that calls <code>knit_child</code> with the template multiple times.</p>
+<p>Here&#39;s a simple example:</p>
+<h2 id="main_file"><a href="#main_file" class="header-anchor">Main File</a></h2>
+<pre><code class="txt hljs">---
+title: &quot;Variable Number of Figures&quot;
+format: typst
+---
 
-state_list = DataFrame[]
+# An Example Report
 
-prizes = [<span class="hljs-number">14000</span>, <span class="hljs-number">10000</span>, <span class="hljs-number">7000</span>, <span class="hljs-number">5000</span>, <span class="hljs-number">5000</span>, <span class="hljs-number">5000</span>, <span class="hljs-number">5000</span>, <span class="hljs-number">5000</span>,
-   <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>, <span class="hljs-number">2500</span>]
+```{r, include = FALSE}
+library(tibble)
+library(dplyr)
+library(ggplot2)
 
-<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">10000</span>
-    current_state = DataFrame(
-        id = <span class="hljs-number">1</span>:<span class="hljs-number">63</span>,
-        kills = vcat(
-            repeat([<span class="hljs-number">5</span>], <span class="hljs-number">1</span>),
-            repeat([<span class="hljs-number">4</span>], <span class="hljs-number">2</span>),
-            repeat([<span class="hljs-number">3</span>], <span class="hljs-number">2</span>),
-            repeat([<span class="hljs-number">2</span>], <span class="hljs-number">21</span>),
-            repeat([<span class="hljs-number">1</span>], <span class="hljs-number">18</span>),
-            repeat([<span class="hljs-number">0</span>], <span class="hljs-number">63</span>-<span class="hljs-number">44</span>)
-        ),
-        post_r3_kills = vcat(
-            repeat([<span class="hljs-number">5</span>], <span class="hljs-number">1</span>),
-            repeat([<span class="hljs-number">4</span>], <span class="hljs-number">2</span>),
-            repeat([<span class="hljs-number">3</span>], <span class="hljs-number">2</span>),
-            repeat([<span class="hljs-number">2</span>], <span class="hljs-number">21</span>),
-            repeat([<span class="hljs-number">1</span>], <span class="hljs-number">18</span>),
-            repeat([<span class="hljs-number">0</span>], <span class="hljs-number">63</span>-<span class="hljs-number">44</span>)
-        ),
-    )
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
 
-    <span class="hljs-keyword">for</span> round <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">45</span>
-        killer = rand(<span class="hljs-number">1</span>:nrow(current_state))
-        killed = rand(vcat(<span class="hljs-number">1</span>:(killer-<span class="hljs-number">1</span>), (killer+<span class="hljs-number">1</span>):nrow(current_state)))
-        current_state.kills[killer] += <span class="hljs-number">1</span>
-        delete!(current_state, [killed])
-    <span class="hljs-keyword">end</span>
+data &lt;- tibble(
+    q = rep(c(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;), each = 100),
+    v = c(runif(100), rnorm(100), rexp(100))
+)
+```
 
-    sort!(current_state, :kills, rev = <span class="hljs-literal">true</span>)
-    current_state.iter .= i
-    current_state.prize = prizes
+```{r, results = &quot;hide&quot;}
+out = NULL
+for(q in unique(data$q)){
+    question &lt;- q
+    out &lt;- c(out, knitr::knit_child(&quot;child.qmd&quot;))
+}
+```
 
-    push!(state_list, current_state)
-<span class="hljs-keyword">end</span>
+```{r, results = &quot;asis&quot;}
+cat(paste(out, collapse=&quot;\n&quot;) )
+```</code></pre>
+<h2 id="childqmd"><a href="#childqmd" class="header-anchor">child.qmd</a></h2>
+<pre><code class="txt hljs"># Question `r question`
 
-<span class="hljs-meta">@chain</span> vcat(state_list...) <span class="hljs-keyword">begin</span>
-    <span class="hljs-meta">@group_by</span>(post_r3_kills, id)
-    <span class="hljs-meta">@summarize</span>(av_win = sum(prize)/<span class="hljs-number">10000</span>)
-    <span class="hljs-meta">@summarize</span>(ev = mean(av_win))
-    <span class="hljs-meta">@arrange</span>(desc(ev))
-<span class="hljs-keyword">end</span></code></pre>
+```{r, results = &quot;hide&quot;}
+dist = case_when(
+  q == &quot;1&quot; ~ &quot;Uniform&quot;,
+  q == &quot;2&quot; ~ &quot;Normal&quot;,
+  TRUE ~ &quot;Exponential&quot;)
+```
+
+Here&#x27;s some text, it could talk about the distribution that the data came from, which in this case is the `r dist`.
+
+```{r}
+ggplot(filter(data, q == question)) +
+    geom_histogram(aes(x = v))
+```</code></pre>
+<h2 id="result"><a href="#result" class="header-anchor">Result</a></h2>
+<p>The pdf document that is generated by rendering or previewing the main document in quarto is available <a href="/assets/multi.pdf">here.</a></p>
+<hr />
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
     <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the
