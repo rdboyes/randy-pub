@@ -26,8 +26,10 @@ function hfun_recent_posts(m::Vector{String})
         fi = "posts/" * splitext(post)[1]
         title = pagevar(fi, :title)
         datestr = pagevar(fi, :date)
-        date = Date(pagevar(fi, :date), df)
-        push!(posts, (title=title, link=fi, date=date))
+        if !isnothing(datestr)
+            date = Date(datestr, df)
+            push!(posts, (title=title, link=fi, date=date))
+        end
     end
 
     markdown = "Dict{Date, String} with " *
