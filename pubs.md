@@ -28,27 +28,34 @@ rss = "A list of working papers and publications."
 <tbody>
   <tr>
     <th class="width-min" scope = "row">1</th>
+    <td>Julia</td>
+    <td>lineaR: Firebase.jl (Maintaining) </td>
+    <td><a href="https://github.com/rboyes/Firebase.jl">GitHub</a></td>
+    <td>2025</td>
+  </tr>
+  <tr>
+    <th class="width-min" scope = "row">2</th>
     <td>R</td>
     <td>lineaR: Linear GraphQL API Wrapper for R </td>
     <td><a href="https://github.com/Presage-Group/lineaR">GitHub</a></td>
     <td>2025</td>
   </tr>
   <tr>
-    <th class="width-min" scope = "row">2</th>
+    <th class="width-min" scope = "row">3</th>
     <td>Julia</td>
     <td>Sentry.jl: Julia Sentry SDK </td>
     <td><a href="https://github.com/Presage-Group/Sentry.jl">GitHub</a></td>
     <td>2025</td>
   </tr>
   <tr>
-    <th class="width-min" scope = "row">3</th>
+    <th class="width-min" scope = "row">4</th>
     <td>Julia</td>
     <td>TidierPlots.jl: ggplot2 for julia. </td>
     <td><a href="https://github.com/TidierOrg/TidierPlots.jl">GitHub</a></td>
     <td>2024</td>
   </tr>
   <tr>
-    <th class="width-min" scope = "row">4</th>
+    <th class="width-min" scope = "row">5</th>
     <td>R</td>
     <td>Forester: Easy publication-ready forest plots.</td>
     <td><a href="https://github.com/rdboyes/forester">GitHub</a></td>
