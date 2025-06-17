@@ -4,12 +4,14 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
          
+        <link rel="stylesheet" href="/libs/highlight/styles/github.min.css">
+ 
         <link rel="stylesheet" href="/css/reset.css" />
         <link rel="stylesheet" href="/css/normalize.css" />
         <link rel="stylesheet" href="/css/basic.css" />
         <link rel="icon" href="/assets/favicon.png" />
         
-        <title>Posts</title>
+        <title>randy.pub</title>
         
     </head>
     <body>
@@ -183,20 +185,17 @@
         onDebugToggle();
     </script>
 </html>
-<div class="franklin-content">
+<div class="franklin-content"><pre><code class="julia hljs"><span class="hljs-keyword">using</span> Statistics, CairoMakie
 
-<span style="color:#70C66B;">julia></span>
-<span style="color:#5BC5E2;">print</span>(Posts)
-
-<p>Dict&#123;Date, String&#125; with 6 entrys:</p>
-<p><a href="../posts/multifig">2025-03-31 &#61;&gt; &quot;Knitting Quarto Docs with a Dynamic Number of Figures</a>&quot;</p>
-<p><a href="../posts/adventofcode2024w2">2024-12-14 &#61;&gt; &quot;Advent of Code Week 2</a>&quot;</p>
-<p><a href="../posts/adventofcode2024">2024-12-07 &#61;&gt; &quot;Advent of Code Week 1</a>&quot;</p>
-<p><a href="../posts/blueskycomments">2024-11-26 &#61;&gt; &quot;Bluesky comments sections in Franklin.jl</a>&quot;</p>
-<p><a href="../posts/themes">2024-09-08 &#61;&gt; &quot;Basics of Making Makie Themes for TidierPlots</a>&quot;</p>
-<p><a href="../posts/tidierplots1">2024-09-05 &#61;&gt; &quot;TidierPlots.jl: From Script to Package, Part 1</a>&quot;</p>
-
-<hr />
+barplot(
+    var.(eachrow(
+        reduce(hcat, 
+            [parse.(<span class="hljs-built_in">Int</span>, x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> 
+                split.(bitstring.(rand(<span class="hljs-number">1000</span>)), <span class="hljs-string">&quot;&quot;</span>)
+            ]
+        )
+    )); bins = <span class="hljs-number">64</span>, breaks = <span class="hljs-number">0</span>:
+)</code></pre>
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
     <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the
@@ -209,6 +208,13 @@
 </div>
 </div><!-- CONTENT ENDS HERE -->
     
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>
+    hljs.highlightAll();
+    hljs.configure({ tabReplace: "    " });
+</script>
+
     
   </body>
 </html>
