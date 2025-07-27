@@ -29,7 +29,7 @@ rss = "A list of working papers and publications."
   <tr>
     <th class="width-min" scope = "row">1</th>
     <td>Julia</td>
-    <td>lineaR: Firebase.jl (Maintaining) </td>
+    <td>Firebase.jl (Maintaining) </td>
     <td><a href="https://github.com/rboyes/Firebase.jl">GitHub</a></td>
     <td>2025</td>
   </tr>
@@ -97,7 +97,7 @@ rss = "A list of working papers and publications."
 </table>
 ~~~
 
-### Last Group (10 rows): type = "Published Work ([Google Scholar](https://scholar.google.ca/citations?hl=en&user=T7SV6T0AAAAJ&view_op=list_works&sortby=pubdate))"
+### Third Group (10 rows): type = "Published Work ([Google Scholar](https://scholar.google.ca/citations?hl=en&user=T7SV6T0AAAAJ&view_op=list_works&sortby=pubdate))"
 
 ~~~
 <table>
@@ -185,6 +185,37 @@ rss = "A list of working papers and publications."
 </table>
 ~~~
 
+### Last Group (2 rows): type = "Talks"
+
+~~~
+<table>
+<thead>
+  <tr>
+  <th class="width-min" scope = "corner">Row</th>
+  <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
+  <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
+  <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
+  <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <th class="width-min" scope = "row">1</th>
+    <td>Software</td>
+    <td>What's New in TidierPlots.jl</td>
+    <td><a href="https://www.youtube.com/live/HMdBi9Lrbes?si=G1oNC_ibjsfMbAK7&t=376">Juliacon</td>
+    <td>2025</td>
+  </tr>
+  <tr>
+    <th class="width-min" scope = "row">2</th>
+    <td>Play</td>
+    <td>Introduction to TidierPlots.jl</td>
+    <td><a href="https://www.youtube.com/watch?v=33yik1ciUWE">Juliacon</td>
+    <td>2024</td>
+  </tr>
+</tbody>
+</table>
+~~~
 
 
 ---
