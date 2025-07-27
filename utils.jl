@@ -68,3 +68,47 @@ end
     end
     return fd2html(markdown, internal=true)
 end
+
+function hfun_make_table(args)
+header = """
+<table>
+<thead>
+  <tr>
+    <th class="width-min" scope = "corner">Row</th>
+    <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
+    <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
+    <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
+    <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
+  </tr>
+</thead>
+<tbody>
+"""
+
+rows = ""
+rowcount = 1
+
+for i in 1:5:length(args)
+    rows *= build_row(rowcount, args[i:i+4]...)
+    rowcount += 1
+end
+
+return header * rows * """
+</tbody>
+</table>
+"""
+end
+
+function build_row(row, cat, title, link, linktext, year)
+  return """
+  <tr>
+    <th class="width-min" scope = "row">$row</th>
+    <td>$cat</td>
+    <td>$title</td>
+    <td><a href="$link">$linktext</a></td>
+    <td>$year</td>
+  </tr>
+  """
+end
+
+
+
