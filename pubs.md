@@ -208,7 +208,7 @@ rss = "A list of working papers and publications."
   </tr>
   <tr>
     <th class="width-min" scope = "row">2</th>
-    <td>Play</td>
+    <td>Software</td>
     <td>Introduction to TidierPlots.jl</td>
     <td><a href="https://www.youtube.com/watch?v=33yik1ciUWE">Juliacon</td>
     <td>2024</td>
