@@ -10,7 +10,7 @@ rss = "A list of working papers and publications."
 <span style="color:#5BC5E2;">print</span>(Publications)
 ~~~
 
-**GroupedDataFrame with 3 groups based on key: type**
+**GroupedDataFrame with 4 groups based on key: type**
 
 ### First Group (4 rows): type = "Open Source Software"
 
