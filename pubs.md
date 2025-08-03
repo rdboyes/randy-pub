@@ -15,6 +15,7 @@ rss = "A list of working papers and publications."
 ### First Group (4 rows): type = "Open Source Software"
 
 {{ make_table 
+    
     "Julia" "Firebase.jl (Maintaining)"
     "https://github.com/rboyes/Firebase.jl" "GitHub" "2025"
 

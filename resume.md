@@ -17,7 +17,6 @@ tags = ["syntax", "code"]
 ### First Group (4 rows): type = "Employment ([LinkedIn](https://www.linkedin.com/in/rboyes/))"
 
 
-##
 ~~~
 <table>
 <thead>
@@ -63,7 +62,7 @@ tags = ["syntax", "code"]
 </table>
 ~~~
 
-### Last Group (3 rows): type = "Education ([LinkedIn](https://www.linkedin.com/in/rboyes/))"
+### Second Group (3 rows): type = "Education ([LinkedIn](https://www.linkedin.com/in/rboyes/))"
 
 ~~~
 <table>
@@ -97,6 +96,31 @@ tags = ["syntax", "code"]
     <td>B.Sc.</td>
     <td>Specialization Life Sciences. Honors thesis investigated economics of care for older patients in ICU.</td>
     <td>2009-2013</td>
+  </tr>
+</tbody>
+</table>
+~~~
+
+### Last Group (1 row): type = "Volunteer"
+
+~~~
+<table>
+<thead>
+  <tr>
+  <th class="width-min" scope = "corner">Row</th>
+  <th class="width-min" scope = "col">Where<br><span style="color:#444B6A;">String</span></th>
+  <th class="width-min" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
+  <th class="width-auto" scope = "col">Description<br><span style="color:#444B6A;">String</span></th>
+  <th class="width-min" scope = "col">Years<br><span style="color:#444B6A;">String</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+  <th class="width-min" scope = "row">1</th>
+    <td>Wolfe Island Fire Dept.</td>
+    <td>Firefighter</td>
+    <td>Volunteer firefighter at the only first response organization on Wolfe Island. Responds to fire and medical emergencies. 
+    <td>2024-Present</td>
   </tr>
 </tbody>
 </table>
