@@ -200,3 +200,7 @@ DataFrame(a = 1:10) |> mutate(b = plus_one[:a])
 ## Is this a good idea?
 
 No
+
+{{ add_bsky_comments "at://did:plc:2h5e6whhbk5vnnerqqoi256k/app.bsky.feed.post/3m2zkdcuf4k26" }}
+
+---
