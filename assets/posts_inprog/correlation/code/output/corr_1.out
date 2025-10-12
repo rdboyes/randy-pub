@@ -1,2 +1,2 @@
-UndefVarError: `belowzero` not defined in `TidierData`
-Suggestion: check for spelling errors or missing imports.
+LoadError: TypeError: non-boolean (Main.FD_SANDBOX_17733650908351757876.TidyCondition) used in boolean context
+in expression starting at none:2
