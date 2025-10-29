@@ -32,45 +32,28 @@ rss = "A list of working papers and publications."
     "https://github.com/rdboyes/forester" "GitHub" "2021"
 }}
 
-### Second Group (2 rows): type = "Preprints"
+### Second Group (3 rows): type = "Preprints"
 
-~~~
-<table>
-<thead>
-  <tr>
-  <th class="width-min" scope = "corner">Row</th>
-  <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
-  <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
-  <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
-  <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <th class="width-min" scope = "row">1</th>
-    <td>Aviation</td>
-    <td>Optimizing Aerospace Sustainability Outputs: Understanding How Negative Emotions from Barriers to Personal AchievementAffect Researchers, Product Developers, Trainers, and Recruiters</td>
-    <td><a href=https://osf.io/preprints/socarxiv/ys32x_v1">OSF</td>
-    <td>2025</td>
-  </tr>
+{{ make_table
 
-  <tr>
-    <th class="width-min" scope = "row">2</th>
-    <td>Play</td>
-    <td>Development of a Neighbourhood Playability Index</td>
-    <td><a href="https://qspace.library.queensu.ca/items/2b30c32e-0a13-4929-ae2a-7bd2fc0c34cd">Thesis</td>
-    <td>2023</td>
-  </tr>
-  <tr>
-    <th class="width-min" scope = "row">3</th>
-    <td>Play</td>
-    <td>Development and Validation of a Canadian Index of Neighbourhood Playability</td>
-    <td><a href="https://qspace.library.queensu.ca/items/2b30c32e-0a13-4929-ae2a-7bd2fc0c34cd">Thesis</td>
-    <td>2023</td>
-  </tr>
-</tbody>
-</table>
-~~~
+  "Aviation" 
+  "Optimizing Aerospace Sustainability Outputs: Understanding How Negative Emotions from Barriers to Personal Achievement Affect Researchers, Product Developers, Trainers, and Recruiters" 
+  "https://osf.io/preprints/socarxiv/ys32x_v1"
+  "OSF"
+  "2025"
+
+  "Play"
+  "Development of a Neighbourhood Playability Index"
+  "https://qspace.library.queensu.ca/items/2b30c32e-0a13-4929-ae2a-7bd2fc0c34cd"
+  "Thesis"
+  "2023"
+
+  "Play"
+  "Development and Validation of a Canadian Index of Neighbourhood Playability"
+  "https://qspace.library.queensu.ca/items/2b30c32e-0a13-4929-ae2a-7bd2fc0c34cd"
+  "Thesis"
+  "2023"
+}}
 
 ### Third Group (12 rows): type = "Published Work ([Google Scholar](https://scholar.google.ca/citations?hl=en&user=T7SV6T0AAAAJ&view_op=list_works&sortby=pubdate))"
 
@@ -90,14 +73,14 @@ rss = "A list of working papers and publications."
   <th class="width-min" scope = "row">1</th>
   <td>Cancer</td>
   <td>Development and validation of EsoTIME, a prognostication tool for resected esophageal and gastroesophageal cancer.</td>
-  <td>Annals of Surgical Oncology</td>
+  <td><a href="https://pubmed.ncbi.nlm.nih.gov/41139180/">Annals of Surgical Oncology</td>
   <td>2025</td>
 </tr>
 <tr>
   <th class="width-min" scope = "row">2</th>
   <td>Mental Health</td>
   <td>Comparing self-reported symptoms of anxiety and depression among Canadian post-secondary students to the general Canadian population during the COVID-19 pandemic: a national repeated cross-sectional trend analysis</td>
-  <td>Sage Open</td>
+  <td><a href="https://journals.sagepub.com/doi/10.1177/21582440251389262">Sage Open</td>
   <td>2025</td>
 </tr>
 <tr>
