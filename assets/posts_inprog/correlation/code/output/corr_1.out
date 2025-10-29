@@ -1,2 +1,190 @@
-LoadError: TypeError: non-boolean (Main.FD_SANDBOX_17733650908351757876.TidyCondition) used in boolean context
-in expression starting at none:2
+The following 2 direct dependencies failed to precompile:
+
+TidierPlots 
+
+Failed to precompile TidierPlots [337ecbd1-5042-4e2a-ae6f-ca776f97570a] to "/home/runner/.julia/compiled/v1.12/TidierPlots/jl_tlycmT".
+ERROR: LoadError: FieldError: type Core.TypeName has no field `mt`, available fields: `name`, `module`, `singletonname`, `names`, `atomicfields`, `constfields`, `wrapper`, `Typeofwrapper`, `cache`, `linearcache`, `partial`, `hash`, `max_args`, `n_uninitialized`, `flags`, `cache_entry_count`, `max_methods`, `constprop_heuristic`
+Stacktrace:
+  [1] getproperty(x::Core.TypeName, f::Symbol)
+    @ Base ./Base_compiler.jl:54
+  [2] func2string(func::typeof(MakieCore.linesegments))
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/recipes.jl:9
+  [3] plotkey(::Type{MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}}})
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/recipes.jl:21
+  [4] plotkey(::MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}})
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/recipes.jl:22
+  [5] get_attribute(dict::MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}}, key::Symbol, default::Nothing)
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/attributes.jl:255
+  [6] get_attribute(dict::MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}}, key::Symbol)
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/attributes.jl:252
+  [7] draw_atomic(scene::Makie.Scene, screen::CairoMakie.Screen{CairoMakie.IMAGE}, primitive::Union{MakieCore.Lines, MakieCore.LineSegments})
+    @ CairoMakie ~/.julia/packages/CairoMakie/W0SZK/src/primitives.jl:6
+  [8] draw_plot(scene::Makie.Scene, screen::CairoMakie.Screen{CairoMakie.IMAGE}, primitive::MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}})
+    @ CairoMakie ~/.julia/packages/CairoMakie/W0SZK/src/infrastructure.jl:129
+  [9] cairo_draw(screen::CairoMakie.Screen{CairoMakie.IMAGE}, scene::Makie.Scene)
+    @ CairoMakie ~/.julia/packages/CairoMakie/W0SZK/src/infrastructure.jl:51
+ [10] colorbuffer(screen::CairoMakie.Screen{CairoMakie.IMAGE})
+    @ CairoMakie ~/.julia/packages/CairoMakie/W0SZK/src/screen.jl:311
+ [11] colorbuffer(screen::CairoMakie.Screen{CairoMakie.IMAGE}, format::Makie.ImageStorageFormat)
+    @ Makie ~/.julia/packages/Makie/VRavR/src/display.jl:382
+ [12] colorbuffer(fig::Makie.FigureAxisPlot, format::Makie.ImageStorageFormat; update::Bool, backend::Module, screen_config::@Kwargs{})
+    @ Makie ~/.julia/packages/Makie/VRavR/src/display.jl:466
+ [13] colorbuffer
+    @ ~/.julia/packages/Makie/VRavR/src/display.jl:457 [inlined]
+ [14] colorbuffer(fig::Makie.FigureAxisPlot)
+    @ Makie ~/.julia/packages/Makie/VRavR/src/display.jl:457
+ [15] top-level scope
+    @ ~/.julia/packages/Makie/VRavR/precompile/shared-precompile.jl:6
+ [16] include(mapexpr::Function, mod::Module, _path::String)
+    @ Base ./Base.jl:307
+ [17] top-level scope
+    @ ~/.julia/packages/CairoMakie/W0SZK/src/precompiles.jl:11
+ [18] macro expansion
+    @ ~/.julia/packages/PrecompileTools/gn08A/src/workloads.jl:73 [inlined]
+ [19] macro expansion
+    @ ~/.julia/packages/CairoMakie/W0SZK/src/precompiles.jl:15 [inlined]
+ [20] include(mapexpr::Function, mod::Module, _path::String)
+    @ Base ./Base.jl:307
+ [21] top-level scope
+    @ ~/.julia/packages/CairoMakie/W0SZK/src/CairoMakie.jl:36
+ [22] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [23] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::String)
+    @ Base ./loading.jl:2996
+ [24] top-level scope
+    @ stdin:5
+ [25] eval(m::Module, e::Any)
+    @ Core ./boot.jl:489
+ [26] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
+    @ Base ./loading.jl:2842
+ [27] include_string
+    @ ./loading.jl:2852 [inlined]
+ [28] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:315
+ [29] _start()
+    @ Base ./client.jl:550
+in expression starting at /home/runner/.julia/packages/Makie/VRavR/precompile/shared-precompile.jl:3
+in expression starting at /home/runner/.julia/packages/CairoMakie/W0SZK/src/precompiles.jl:10
+in expression starting at /home/runner/.julia/packages/CairoMakie/W0SZK/src/CairoMakie.jl:1
+in expression starting at stdin:5
+ERROR: LoadError: Failed to precompile CairoMakie [13f3f980-e62b-5c42-98c6-ff1f3baf88f0] to "/home/runner/.julia/compiled/v1.12/CairoMakie/jl_GxzxjH".
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] compilecache(pkg::Base.PkgId, path::String, internal_stderr::IO, internal_stdout::IO, keep_loaded_modules::Bool; flags::Cmd, cacheflags::Base.CacheFlags, reasons::Dict{String, Int64}, loadable_exts::Nothing)
+    @ Base ./loading.jl:3283
+  [3] (::Base.var"#__require_prelocked##0#__require_prelocked##1"{Base.PkgId, String, Dict{String, Int64}})()
+    @ Base ./loading.jl:2651
+  [4] mkpidlock(f::Base.var"#__require_prelocked##0#__require_prelocked##1"{Base.PkgId, String, Dict{String, Int64}}, at::String, pid::Int32; kwopts::@Kwargs{stale_age::Int64, wait::Bool})
+    @ FileWatching.Pidfile /opt/hostedtoolcache/julia/1.12.1/x64/share/julia/stdlib/v1.12/FileWatching/src/pidfile.jl:93
+  [5] #mkpidlock#7
+    @ /opt/hostedtoolcache/julia/1.12.1/x64/share/julia/stdlib/v1.12/FileWatching/src/pidfile.jl:88 [inlined]
+  [6] trymkpidlock(::Function, ::Vararg{Any}; kwargs::@Kwargs{stale_age::Int64})
+    @ FileWatching.Pidfile /opt/hostedtoolcache/julia/1.12.1/x64/share/julia/stdlib/v1.12/FileWatching/src/pidfile.jl:114
+  [7] #invokelatest_gr#232
+    @ ./reflection.jl:1282 [inlined]
+  [8] invokelatest_gr
+    @ ./reflection.jl:1274 [inlined]
+  [9] maybe_cachefile_lock(f::Base.var"#__require_prelocked##0#__require_prelocked##1"{Base.PkgId, String, Dict{String, Int64}}, pkg::Base.PkgId, srcpath::String; stale_age::Int64)
+    @ Base ./loading.jl:3854
+ [10] maybe_cachefile_lock
+    @ ./loading.jl:3851 [inlined]
+ [11] __require_prelocked(pkg::Base.PkgId, env::String)
+    @ Base ./loading.jl:2637
+ [12] _require_prelocked(uuidkey::Base.PkgId, env::String)
+    @ Base ./loading.jl:2465
+ [13] macro expansion
+    @ ./loading.jl:2393 [inlined]
+ [14] macro expansion
+    @ ./lock.jl:376 [inlined]
+ [15] __require(into::Module, mod::Symbol)
+    @ Base ./loading.jl:2358
+ [16] require(into::Module, mod::Symbol)
+    @ Base ./loading.jl:2334
+ [17] top-level scope
+    @ ~/.julia/packages/TidierPlots/vxHk1/src/TidierPlots.jl:4
+ [18] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [19] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::Nothing)
+    @ Base ./loading.jl:2996
+ [20] top-level scope
+    @ stdin:5
+ [21] eval(m::Module, e::Any)
+    @ Core ./boot.jl:489
+ [22] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
+    @ Base ./loading.jl:2842
+ [23] include_string
+    @ ./loading.jl:2852 [inlined]
+ [24] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:315
+ [25] _start()
+    @ Base ./client.jl:550
+in expression starting at /home/runner/.julia/packages/TidierPlots/vxHk1/src/TidierPlots.jl:1
+in expression starting at stdin:5
+CairoMakie 
+
+Failed to precompile CairoMakie [13f3f980-e62b-5c42-98c6-ff1f3baf88f0] to "/home/runner/.julia/compiled/v1.12/CairoMakie/jl_74W0YL".
+ERROR: LoadError: FieldError: type Core.TypeName has no field `mt`, available fields: `name`, `module`, `singletonname`, `names`, `atomicfields`, `constfields`, `wrapper`, `Typeofwrapper`, `cache`, `linearcache`, `partial`, `hash`, `max_args`, `n_uninitialized`, `flags`, `cache_entry_count`, `max_methods`, `constprop_heuristic`
+Stacktrace:
+  [1] getproperty(x::Core.TypeName, f::Symbol)
+    @ Base ./Base_compiler.jl:54
+  [2] func2string(func::typeof(MakieCore.linesegments))
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/recipes.jl:9
+  [3] plotkey(::Type{MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}}})
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/recipes.jl:21
+  [4] plotkey(::MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}})
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/recipes.jl:22
+  [5] get_attribute(dict::MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}}, key::Symbol, default::Nothing)
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/attributes.jl:255
+  [6] get_attribute(dict::MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}}, key::Symbol)
+    @ MakieCore ~/.julia/packages/MakieCore/UAwps/src/attributes.jl:252
+  [7] draw_atomic(scene::Makie.Scene, screen::CairoMakie.Screen{CairoMakie.IMAGE}, primitive::Union{MakieCore.Lines, MakieCore.LineSegments})
+    @ CairoMakie ~/.julia/packages/CairoMakie/W0SZK/src/primitives.jl:6
+  [8] draw_plot(scene::Makie.Scene, screen::CairoMakie.Screen{CairoMakie.IMAGE}, primitive::MakieCore.LineSegments{Tuple{Vector{GeometryBasics.Point{2, Float32}}}})
+    @ CairoMakie ~/.julia/packages/CairoMakie/W0SZK/src/infrastructure.jl:129
+  [9] cairo_draw(screen::CairoMakie.Screen{CairoMakie.IMAGE}, scene::Makie.Scene)
+    @ CairoMakie ~/.julia/packages/CairoMakie/W0SZK/src/infrastructure.jl:51
+ [10] colorbuffer(screen::CairoMakie.Screen{CairoMakie.IMAGE})
+    @ CairoMakie ~/.julia/packages/CairoMakie/W0SZK/src/screen.jl:311
+ [11] colorbuffer(screen::CairoMakie.Screen{CairoMakie.IMAGE}, format::Makie.ImageStorageFormat)
+    @ Makie ~/.julia/packages/Makie/VRavR/src/display.jl:382
+ [12] colorbuffer(fig::Makie.FigureAxisPlot, format::Makie.ImageStorageFormat; update::Bool, backend::Module, screen_config::@Kwargs{})
+    @ Makie ~/.julia/packages/Makie/VRavR/src/display.jl:466
+ [13] colorbuffer
+    @ ~/.julia/packages/Makie/VRavR/src/display.jl:457 [inlined]
+ [14] colorbuffer(fig::Makie.FigureAxisPlot)
+    @ Makie ~/.julia/packages/Makie/VRavR/src/display.jl:457
+ [15] top-level scope
+    @ ~/.julia/packages/Makie/VRavR/precompile/shared-precompile.jl:6
+ [16] include(mapexpr::Function, mod::Module, _path::String)
+    @ Base ./Base.jl:307
+ [17] top-level scope
+    @ ~/.julia/packages/CairoMakie/W0SZK/src/precompiles.jl:11
+ [18] macro expansion
+    @ ~/.julia/packages/PrecompileTools/gn08A/src/workloads.jl:73 [inlined]
+ [19] macro expansion
+    @ ~/.julia/packages/CairoMakie/W0SZK/src/precompiles.jl:15 [inlined]
+ [20] include(mapexpr::Function, mod::Module, _path::String)
+    @ Base ./Base.jl:307
+ [21] top-level scope
+    @ ~/.julia/packages/CairoMakie/W0SZK/src/CairoMakie.jl:36
+ [22] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [23] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::Nothing)
+    @ Base ./loading.jl:2996
+ [24] top-level scope
+    @ stdin:5
+ [25] eval(m::Module, e::Any)
+    @ Core ./boot.jl:489
+ [26] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
+    @ Base ./loading.jl:2842
+ [27] include_string
+    @ ./loading.jl:2852 [inlined]
+ [28] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:315
+ [29] _start()
+    @ Base ./client.jl:550
+in expression starting at /home/runner/.julia/packages/Makie/VRavR/precompile/shared-precompile.jl:3
+in expression starting at /home/runner/.julia/packages/CairoMakie/W0SZK/src/precompiles.jl:10
+in expression starting at /home/runner/.julia/packages/CairoMakie/W0SZK/src/CairoMakie.jl:1
+in expression starting at stdin:5

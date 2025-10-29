@@ -1,1 +1,1 @@
-CairoMakie.Screen{IMAGE}
+nothing

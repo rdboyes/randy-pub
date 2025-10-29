@@ -27,7 +27,7 @@
     <tr>
         <td scope="header" class="width-min">Updated</td>
         <td scope="header" class="width-auto">
-            <time> October 14, 2025</time>
+            <time> October 29, 2025</time>
         </td>
     </tr>
     <tr>
@@ -201,7 +201,7 @@ plot1 = ggplot(df) +
       color = (:orangered, <span class="hljs-number">0.5</span>),
       strokewidth = <span class="hljs-number">0.5</span>) +
     lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + theme_minimal() <span class="hljs-comment"># theme_minimal is from Makie</span></code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot1.png" alt="">
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot1' not found. //</span></p>
 <p>Lets make this plot fit a little better with the monospace theme we&#39;ve got going on this site. First - the most obvious change. We need to change the font.</p>
 <pre><code class="julia hljs">juliamono = <span class="hljs-string">&quot;https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Light.woff2&quot;</span>
 
@@ -214,7 +214,7 @@ plot2 = ggplot(df) +
       color = (:orangered, <span class="hljs-number">0.5</span>),
       strokewidth = <span class="hljs-number">0.5</span>) +
     lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme</code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot2.png" alt="">
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot2' not found. //</span></p>
 <p>The syntax looks a little funny if you&#39;re coming from R, so it&#39;s worth a little detour to talk about which elements can be used in themes, and how to pass them in. Makie themes can contain settings for the Attributes of any object. To change the font, we want to edit the <a href="https://docs.makie.org/stable/reference/plots/text#fonts">&quot;fonts&quot; Attribute</a> of the Figure which says it needs a &quot;dictionary&quot; that ties font styles &#40;e.g. &quot;regular&quot;&#41; to fonts &#40;&quot;JuliaMono-Light&quot;&#41;. I honestly don&#39;t know why it says it wants a dictionary and then demands a named tuple instead, but that&#39;s the way it works. For more info, see the explanation <a href="https://docs.makie.org/stable/explanations/fonts">here</a>.</p>
 <p>Edits to the overall figure are done directly within the Theme call, while changes to <a href="https://docs.makie.org/stable/explanations/blocks">&quot;Blocks&quot;</a> are done within a &quot;UppercaseBlockName &#61; &#40;tuple of Attributes&#41;&quot; argument to Theme. We&#39;re going to need to change a lot of options for Axis &#40;whose Attributes are listed <a href="https://docs.makie.org/stable/reference/blocks/axis#attributes">here</a> in order to make this theme look right. Lets start by getting rid of the background and all of the axis lines except the bottom.</p>
 <pre><code class="julia hljs">randy_pub_theme = Theme(
@@ -234,7 +234,7 @@ plot3 = ggplot(df) +
     geom_histogram(aes(x = :x),
       color = (:transparent, <span class="hljs-number">0.5</span>), strokewidth = <span class="hljs-number">1</span>) +
     lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>)) + randy_pub_theme</code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot3.png" alt="">
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot3' not found. //</span></p>
 <p>Notice that there are two different calls to &quot;background &#61; :transparent&quot;. The one inside the Axis group makes the Axis background transparent, and the one at the base level makes the figure&#39;s background transparent.</p>
 <p>Now we need to align the figure with the monospace grid.</p>
 <pre><code class="julia hljs">randy_pub_theme = Theme(
@@ -258,7 +258,7 @@ plot3a = ggplot(df) +
     geom_histogram(aes(x = :x),
       color = (:transparent, <span class="hljs-number">0.5</span>), strokewidth = <span class="hljs-number">1</span>) +
     lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), y = c(<span class="hljs-number">0</span>, <span class="hljs-number">30</span>)) + randy_pub_theme</code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot3a.png" alt="">
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot3a' not found. //</span></p>
 <p>We need to tweak the colors now for dark mode:</p>
 <pre><code class="julia hljs">randy_pub_theme_dark = Theme(
     fonts=(;regular=juliamono),
@@ -286,7 +286,7 @@ plot4 = ggplot(df) +
     geom_histogram(aes(x = :x),
       color = (:transparent, <span class="hljs-number">0.5</span>)) +
     lims(x = c(-<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), y = c(<span class="hljs-number">0</span>, <span class="hljs-number">30</span>)) + randy_pub_theme_dark</code></pre>
-<img src="/assets/posts/themes/code/output/themes_plot4.png" alt="">
+<p><span style="color:red;">// Image matching '/assets/posts/themes/code/themes_plot4' not found. //</span></p>
 <p>Success&#33; There&#39;s lots more than can be done here but I&#39;m happy with the basic look. We can also use a little html to swap out the theme based on user&#39;s dark mode setting:</p>
 
 <picture>
