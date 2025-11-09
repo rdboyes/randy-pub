@@ -4,8 +4,6 @@
 
 @def rss_pubdate = Date(2025, 10, 12)
 
----
-
 ## Type Piracy
 
 If you aren't familiar, "type piracy" is when you define versions of methods/functions you don't own for types you don't own. The julia community is very anti-type-piracy. Unfortunately for them, piracy is cool. I don't make the rules.
