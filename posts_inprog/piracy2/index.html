@@ -4,12 +4,14 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
          
+        <link rel="stylesheet" href="/libs/highlight/styles/github.min.css">
+ 
         <link rel="stylesheet" href="/css/reset.css" />
         <link rel="stylesheet" href="/css/normalize.css" />
         <link rel="stylesheet" href="/css/basic.css" />
         <link rel="icon" href="/assets/favicon.png" />
         
-        <title>randy.pub</title>
+        <title>You wouldn't pirate a type (part 2)</title>
         
     </head>
     <body>
@@ -183,58 +185,111 @@
         onDebugToggle();
     </script>
 </html>
-<div class="franklin-content">
-<span style="color:#70C66B;">julia></span>
-<span style="color:#5BC5E2;">print</span>(Intro)
+<div class="franklin-content"><h2 id="a_more_complete_slice"><a href="#a_more_complete_slice" class="header-anchor">A more complete <code>slice</code></a></h2>
+<p><a href="/posts/piracy/">Part 1</a> looked at some basic half-implementations of tidyverse functions, but can we actually get a full implementation of at least one function? <code>slice</code> seems like the easiest, so lets try. Tidyverse <code>slice</code> has the following options:</p>
+<ul>
+<li><p>slice variants: <code>slice_head</code>, <code>slice_tail</code>, <code>slice_sample</code>, <code>slice_min</code>, and <code>slice_max</code></p>
+</li>
+<li><p>selection: should support vector-like objects that contain integers as well as ranges, provided they are all positive &#40;to keep&#41; or all negative &#40;to drop&#41;</p>
+</li>
+<li><p>by: optionally group the dataframe for the duration of this operation only</p>
+</li>
+<li><p>preserve: should the original grouping, if present, be preserved? &#40;Bool&#41;</p>
+</li>
+<li><p>n/prop: the number or proportion of rows to keep</p>
+</li>
+<li><p>order_by: sort the df by this variable prior to slicing if provided</p>
+</li>
+<li><p>na&#95;rm: should na values of the order&#95;by variable be removed? &#40;Bool&#41;</p>
+</li>
+<li><p>weight_by: sampling weights</p>
+</li>
+<li><p>replace: should sampling be with &#40;true&#41; or without &#40;false, the default&#41; replacement</p>
+</li>
+</ul>
+<p>Set up as in the last post:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">using</span> DataFrames
 
-<p>&quot;I &#40;Randy&#41; am currently working as the Director of Analytics at <a href="https://presagegroup.com/">Presage Group Inc.</a>. I completed my Ph.D. in Epidemiology at Queen&#39;s University in 2023. I live a &quot;short&quot; ferry ride away from Kingston, ON on Wolfe Island.&quot;</p>
+<span class="hljs-keyword">struct</span> TidyExpr
+    f::<span class="hljs-built_in">Function</span>
+<span class="hljs-keyword">end</span>
 
-<span style="color:#70C66B;">julia></span>
-<span style="color:#5BC5E2;">print</span>(Socials)
+<span class="hljs-keyword">import</span> Base.|&gt;
+Base.:(|&gt;)(x::TidyExpr, y::TidyExpr) = TidyExpr(x.f ∘ y.f)
+Base.:(|&gt;)(x::DataFrames.DataFrame, y::TidyExpr) = y.f(x)</code></pre>
+<p>We&#39;ll need to expand the slice function to take kwargs and do things with the provided values. Slurped kwargs in julia are represented as Pairs, which can be easily turned into a Dict:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> example(args...; kwargs...)
+  println(args)
+  println(<span class="hljs-string">&quot;Keyword args:&quot;</span>)
+  println(<span class="hljs-built_in">Dict</span>(kwargs))
+<span class="hljs-keyword">end</span>
 
-<p><strong>4x2 DataFrame</strong></p>
+example(<span class="hljs-number">1</span>:<span class="hljs-number">10</span>, by = :a, order_by = :b, na_rm = <span class="hljs-literal">true</span>)</code></pre>
+<pre><code class="plaintext hljs">(1:10,)
+Keyword args:
+Dict{Symbol, Any}(:order_by =&gt; :b, :by =&gt; :a, :na_rm =&gt; true)
+</code></pre>
+<p>As a first pass, lets set up a loop over a couple of supported kwargs with basic implementations of their functionality.</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> slice(args...; kwargs...)
+  f = identity
+  <span class="hljs-keyword">for</span> (k, v) <span class="hljs-keyword">in</span> <span class="hljs-built_in">Dict</span>(kwargs)
+    <span class="hljs-keyword">if</span> k == :by
+      f = f ∘ (x -&gt; groupby(x, v))
+    <span class="hljs-keyword">elseif</span> k == :order_by
+      f = f ∘ (x -&gt; sort(x, v))
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">end</span>
 
-<table>
-<thead>
-  <tr>
-    <th class="width-min" scope = "corner">Row</th>
-    <th class="width-auto" scope = "col">Platform<br><span style="color:#444B6A;">String</span></th>
-    <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <th class="width-min" scope = "row">1</th>
-    <td>Twitter/"X"</td>
-    <td><a href = "https://x.com/randyboyes">@randyboyes</a></td>
-  </tr>
-  <tr>
-    <th class="width-min" scope = "row">2</th>
-    <td>BlueSky</td>
-    <td><a href = "https://bsky.app/profile/randy.pub">@randy.pub</a></td>
-  </tr>
-  <tr>
-    <th class="width-min" scope = "row">3</th>
-    <td>GitHub</td>
-    <td><a href = "https://github.com/rdboyes">rdboyes</a></td>
-  </tr>
-  <tr>
-    <th class="width-min" scope = "row">4</th>
-    <td>Google Scholar</td>
-    <td><a href = "https://scholar.google.ca/citations?user=T7SV6T0AAAAJ&hl=en">R. Boyes</a></td>
-  </tr>
-</tbody>
-</table>
+  <span class="hljs-keyword">return</span> TidyExpr(x -&gt; f(x) <span class="hljs-keyword">isa</span> GroupedDataFrame ?
+    combine(y -&gt; getindex(y, args[<span class="hljs-number">1</span>], :), f(x)) :
+    f(x)[args[<span class="hljs-number">1</span>], :])
+<span class="hljs-keyword">end</span>
 
+DataFrame(a = <span class="hljs-number">1</span>:<span class="hljs-number">6</span>, b = [<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>]) |&gt; slice(<span class="hljs-number">1</span>, by = :b)</code></pre>
+<pre><code class="plaintext hljs">2×2 DataFrame
+ Row │ b      a
+     │ Int64  Int64
+─────┼──────────────
+   1 │     1      1
+   2 │     2      4</code></pre>
+<pre><code class="julia hljs">DataFrame(a = <span class="hljs-number">1</span>:<span class="hljs-number">6</span>, b = <span class="hljs-number">6</span>:-<span class="hljs-number">1</span>:<span class="hljs-number">1</span>) |&gt; slice(<span class="hljs-number">1</span>, order_by = :b)</code></pre>
+<pre><code class="plaintext hljs">DataFrameRow
+ Row │ a      b
+     │ Int64  Int64
+─────┼──────────────
+   1 │     6      1</code></pre>
+<p>The structure of the function works, we just need to add the rest of the arguments:</p>
+<pre><code class="julia hljs"><span class="hljs-keyword">function</span> slice(args...; kwargs...)
+  f = identity
+  selection = args[<span class="hljs-number">1</span>]
+  <span class="hljs-keyword">if</span> any(selection .&lt; <span class="hljs-number">0</span>)
+    selection = setdiff(setdiff)
+  <span class="hljs-keyword">end</span>
+  dkw = <span class="hljs-built_in">Dict</span>(kwargs)
+  <span class="hljs-keyword">for</span> (k, v) <span class="hljs-keyword">in</span> dkw
+    <span class="hljs-keyword">if</span> k == :n
+      selection = <span class="hljs-number">1</span>:v
+    <span class="hljs-keyword">elseif</span> k == :prop
+      f = f ∘ (x -&gt; x[<span class="hljs-number">1</span>:floor(nrow(x) * prop), :])
+    <span class="hljs-keyword">elseif</span> k == :by
+      f = f ∘ (x -&gt; groupby(x, v))
+    <span class="hljs-keyword">elseif</span> k == :order_by
+      f = f ∘ (x -&gt; sort(x, v))
+    <span class="hljs-keyword">elseif</span> k == :replace
 
-<span style="color:#70C66B;">julia></span>
-<span style="color:#5BC5E2;">print</span>(Recent)
+    <span class="hljs-keyword">elseif</span> k == :weight_by
 
-<p>Dict&#123;Date, String&#125; with 2 entrys:</p>
-<p><a href="../posts/piracy">2025-10-12 &#61;&gt; &quot;You wouldn&#39;t pirate a type</a>&quot;</p>
-<p><a href="../posts/multifig">2025-03-31 &#61;&gt; &quot;Knitting Quarto Docs with a Dynamic Number of Figures</a>&quot;</p>
+    <span class="hljs-keyword">elseif</span> k == :na_rm
 
-<hr />
+    <span class="hljs-keyword">elseif</span> k == :preserve
+
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">end</span>
+
+  <span class="hljs-keyword">return</span> TidyExpr(x -&gt; f(x) <span class="hljs-keyword">isa</span> GroupedDataFrame ?
+    combine(y -&gt; getindex(y, selection, :), f(x)) :
+    f(x)[selection, :])
+<span class="hljs-keyword">end</span></code></pre>
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
     <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the
@@ -247,6 +302,13 @@
 </div>
 </div><!-- CONTENT ENDS HERE -->
     
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>
+    hljs.highlightAll();
+    hljs.configure({ tabReplace: "    " });
+</script>
+
     
   </body>
 </html>
