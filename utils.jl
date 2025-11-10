@@ -1,3 +1,5 @@
+using CSV, DataFrames
+
 function hfun_bar(vname)
     val = Meta.parse(vname[1])
     return round(sqrt(val), digits=2)
@@ -33,8 +35,8 @@ function hfun_recent_posts(m::Vector{String})
     end
 
     markdown = "Dict{Date, String} with " *
-        string(n >= 0 ? n : length(posts)) *
-        " entrys:\n\n"
+               string(n >= 0 ? n : length(posts)) *
+               " entrys:\n\n"
 
     # pull all posts if n <= 0
     n = n >= 0 ? n : length(posts) + 1
@@ -70,45 +72,73 @@ end
 end
 
 function hfun_make_table(args)
-header = """
-<table>
-<thead>
-  <tr>
-    <th class="width-min" scope = "corner">Row</th>
-    <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
-    <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
-    <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
-    <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
-  </tr>
-</thead>
-<tbody>
-"""
+    header = """
+    <table>
+    <thead>
+      <tr>
+        <th class="width-min" scope = "corner">Row</th>
+        <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
+        <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
+        <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
+        <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
+      </tr>
+    </thead>
+    <tbody>
+    """
 
-rows = ""
-rowcount = 1
+    rows = ""
+    rowcount = 1
 
-for i in 1:5:length(args)
-    rows *= build_row(rowcount, args[i:i+4]...)
-    rowcount += 1
+    for i in 1:5:length(args)
+        rows *= build_row(rowcount, args[i:i+4]...)
+        rowcount += 1
+    end
+
+    return header * rows * """
+    </tbody>
+    </table>
+    """
 end
 
-return header * rows * """
+function build_row(row, cat, title, link, linktext, year)
+    return """
+    <tr>
+      <th class="width-min" scope = "row">$row</th>
+      <td>$cat</td>
+      <td>$title</td>
+      <td><a href="$link">$linktext</a></td>
+      <td>$year</td>
+    </tr>
+    """
+end
+
+function hfun_make_table_from_csv(filename::Vector{String})
+    data = CSV.read(filename, DataFrame)
+    header = """
+    <table>
+    <thead>
+      <tr>
+        <th class="width-min" scope = "corner">Row</th>
+        <th class="width-min" scope = "col">Category<br><span style="color:#444B6A;">String</span></th>
+        <th class="width-auto" scope = "col">Title<br><span style="color:#444B6A;">String</span></th>
+        <th class="width-min" scope = "col">Link<br><span style="color:#444B6A;">String</span></th>
+        <th class="width-min" scope = "col">Year<br><span style="color:#444B6A;">Int16</span></th>
+      </tr>
+    </thead>
+    <tbody>
+    """
+
+
+    rows = ""
+    rowcount = 1
+
+    for row in eachrow(data)
+        rows *= build_row(rowcount, row.Category, row.Title, row.LinkURL, row.LinkText, row.Year)
+        rowcount += 1
+    end
+
+    return header * rows * """
 </tbody>
 </table>
 """
 end
-
-function build_row(row, cat, title, link, linktext, year)
-  return """
-  <tr>
-    <th class="width-min" scope = "row">$row</th>
-    <td>$cat</td>
-    <td>$title</td>
-    <td><a href="$link">$linktext</a></td>
-    <td>$year</td>
-  </tr>
-  """
-end
-
-
-
