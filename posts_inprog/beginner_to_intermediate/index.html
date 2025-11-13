@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+         
+        <link rel="stylesheet" href="/libs/highlight/styles/github.min.css">
+ 
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/normalize.css" />
+        <link rel="stylesheet" href="/css/basic.css" />
+        <link rel="icon" href="/assets/favicon.png" />
+        
+        <title>Beginner to Intermediate: What changes?</title>
+        
+    </head>
+    <body>
+        <table class="header">
+    <tr>
+        <td colspan="2" rowspan="3" scope="header" class="width-min">
+            <h1 class="title">randy.pub</h1>
+            <span class="subtitle">Personal homepage</span>
+        </td>
+        <td scope="header" class="width-min">Author</td>
+        <td scope="header" class="width-auto">Randy Boyes</td>
+    </tr>
+    <tr>
+        <td scope="header" class="width-min">Updated</td>
+        <td scope="header" class="width-auto">
+            <time> November 13, 2025</time>
+        </td>
+    </tr>
+    <tr>
+        <td scope="header" class="width-min">Nav</td>
+        <td scope="header" class="width-auto">
+            <a href="/">Home</a>
+            <a href="/pubs/">Publications</a>
+            <a href="/resume/">Resume</a>
+            <a href="/posts/">Posts</a>
+        </td>
+    </tr>
+</table>
+<label class="debug-toggle-label"
+    ><input type="checkbox" class="debug-toggle" /> Debug mode</label
+>
+
+
+        <!-- Content appended here -->
+    </body>
+    <div class="debug-grid"></div>
+    <script>
+        function gridCellDimensions() {
+            const element = document.createElement("div");
+            element.style.position = "fixed";
+            element.style.height = "var(--line-height)";
+            element.style.width = "1ch";
+            document.body.appendChild(element);
+            const rect = element.getBoundingClientRect();
+            document.body.removeChild(element);
+            return { width: rect.width, height: rect.height };
+        }
+
+        // Add padding to each media to maintain grid.
+        function adjustMediaPadding() {
+            const cell = gridCellDimensions();
+
+            function setHeightFromRatio(media, ratio) {
+                const rect = media.getBoundingClientRect();
+                const realHeight = rect.width / ratio;
+                const diff = cell.height - (realHeight % cell.height);
+                media.style.setProperty("padding-bottom", `${diff}px`);
+            }
+
+            function setFallbackHeight(media) {
+                const rect = media.getBoundingClientRect();
+                const height =
+                    Math.round(rect.width / 2 / cell.height) * cell.height;
+                media.style.setProperty("height", `${height}px`);
+            }
+
+            function onMediaLoaded(media) {
+                var width, height;
+                switch (media.tagName) {
+                    case "IMG":
+                        width = media.naturalWidth;
+                        height = media.naturalHeight;
+                        break;
+                    case "VIDEO":
+                        width = media.videoWidth;
+                        height = media.videoHeight;
+                        break;
+                }
+                if (width > 0 && height > 0) {
+                    setHeightFromRatio(media, width / height);
+                } else {
+                    setFallbackHeight(media);
+                }
+            }
+
+            const medias = document.querySelectorAll("img, video");
+            for (media of medias) {
+                switch (media.tagName) {
+                    case "IMG":
+                        if (media.complete) {
+                            onMediaLoaded(media);
+                        } else {
+                            media.addEventListener("load", () =>
+                                onMediaLoaded(media),
+                            );
+                            media.addEventListener("error", function () {
+                                setFallbackHeight(media);
+                            });
+                        }
+                        break;
+                    case "VIDEO":
+                        switch (media.readyState) {
+                            case HTMLMediaElement.HAVE_CURRENT_DATA:
+                            case HTMLMediaElement.HAVE_FUTURE_DATA:
+                            case HTMLMediaElement.HAVE_ENOUGH_DATA:
+                                onMediaLoaded(media);
+                                break;
+                            default:
+                                media.addEventListener("loadeddata", () =>
+                                    onMediaLoaded(media),
+                                );
+                                media.addEventListener("error", function () {
+                                    setFallbackHeight(media);
+                                });
+                                break;
+                        }
+                        break;
+                }
+            }
+        }
+
+        adjustMediaPadding();
+        window.addEventListener("load", adjustMediaPadding);
+        window.addEventListener("resize", adjustMediaPadding);
+
+        function checkOffsets() {
+            const ignoredTagNames = new Set([
+                "THEAD",
+                "TBODY",
+                "TFOOT",
+                "TR",
+                "TD",
+                "TH",
+            ]);
+            const cell = gridCellDimensions();
+            const elements = document.querySelectorAll(
+                "body :not(.debug-grid, .debug-toggle)",
+            );
+            for (const element of elements) {
+                if (ignoredTagNames.has(element.tagName)) {
+                    continue;
+                }
+                const rect = element.getBoundingClientRect();
+                if (rect.width === 0 && rect.height === 0) {
+                    continue;
+                }
+                const top = rect.top + window.scrollY;
+                const left = rect.left + window.scrollX;
+                const offset = top % (cell.height / 2);
+                if (offset > 0) {
+                    element.classList.add("off-grid");
+                    console.error(
+                        "Incorrect vertical offset for",
+                        element,
+                        "with remainder",
+                        top % cell.height,
+                        "when expecting divisible by",
+                        cell.height / 2,
+                    );
+                } else {
+                    element.classList.remove("off-grid");
+                }
+            }
+        }
+
+        const debugToggle = document.querySelector(".debug-toggle");
+        function onDebugToggle() {
+            document.body.classList.toggle("debug", debugToggle.checked);
+        }
+        debugToggle.addEventListener("change", onDebugToggle);
+        onDebugToggle();
+    </script>
+</html>
+<div class="franklin-content"><p>When I was first learning how to write code in julia, I solved a series of puzzles called the cryptopals crypto challenges &#40;which are excellent, if you&#39;re into programming puzzles&#41;. It&#39;s been long enough since then that I thought I would take another run at them to see how the code I write has evolved over the last 5 years. I solved the first set without reviewing my past solutions</p>
+<h1 id="challenge_1_convert_a_hex_string_to_a_base64_string"><a href="#challenge_1_convert_a_hex_string_to_a_base64_string" class="header-anchor">Challenge 1: Convert a hex string to a base64 string</a></h1>
+<pre><code class="julia hljs"><span class="hljs-comment"># Beginner Randy</span>
+
+<span class="hljs-keyword">using</span> Base64
+
+str = <span class="hljs-string">&quot;49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d&quot;</span>
+goal = <span class="hljs-string">&quot;SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t&quot;</span>
+out = base64encode(hex2bytes(str))
+<span class="hljs-meta">@assert</span> out == goal</code></pre>
+<pre><code class="julia hljs"><span class="hljs-comment"># Intermediate Randy</span>
+
+str = <span class="hljs-string">&quot;49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d&quot;</span>
+expected = <span class="hljs-string">&quot;SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t&quot;</span>
+
+<span class="hljs-keyword">function</span> bytes(char1::<span class="hljs-built_in">Char</span>, char2::<span class="hljs-built_in">Char</span>)::<span class="hljs-built_in">UInt8</span>
+    temp1 = <span class="hljs-built_in">UInt8</span>(char1)
+    temp2 = <span class="hljs-built_in">UInt8</span>(char2)
+
+    temp1 &gt; <span class="hljs-number">0x40</span> ? temp1 -= <span class="hljs-number">0x57</span> : temp1 -= <span class="hljs-number">0x30</span>
+    temp2 &gt; <span class="hljs-number">0x40</span> ? temp2 -= <span class="hljs-number">0x57</span> : temp2 -= <span class="hljs-number">0x30</span>
+
+    <span class="hljs-keyword">return</span> temp1 * <span class="hljs-number">16</span> + temp2
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> bytes(input::<span class="hljs-built_in">String</span>)::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">UInt8</span>}
+    <span class="hljs-keyword">return</span> [bytes(input[c], input[c+<span class="hljs-number">1</span>]) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">2</span>:length(input)]
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># bytes 1111 1111  2222 2222  3333 3333</span>
+<span class="hljs-comment"># b64   1111 1122  2222 3333  3344 4444</span>
+
+<span class="hljs-keyword">function</span> base64(int1::<span class="hljs-built_in">UInt8</span>, int2::<span class="hljs-built_in">UInt8</span>, int3::<span class="hljs-built_in">UInt8</span>)
+    base64_chars = <span class="hljs-string">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&quot;</span>
+    char1 = base64_chars[int1÷<span class="hljs-number">0x04</span>+<span class="hljs-number">1</span>]
+    char2 = base64_chars[<span class="hljs-number">0x10</span>*rem(int1, <span class="hljs-number">0x04</span>)+int2÷<span class="hljs-number">0x10</span>+<span class="hljs-number">1</span>]
+    char3 = base64_chars[<span class="hljs-number">0x04</span>*rem(int2, <span class="hljs-number">0x10</span>)+(int3÷<span class="hljs-number">0x40</span>)+<span class="hljs-number">1</span>]
+    char4 = base64_chars[rem(int3, <span class="hljs-number">0x40</span>)+<span class="hljs-number">1</span>]
+    <span class="hljs-keyword">return</span> char1 * char2 * char3 * char4
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> base64(input::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">UInt8</span>})::<span class="hljs-built_in">String</span>
+    <span class="hljs-keyword">return</span> *([base64(input[c], input[c+<span class="hljs-number">1</span>], input[c+<span class="hljs-number">2</span>]) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">3</span>:length(input)]...)
+<span class="hljs-keyword">end</span>
+
+println(<span class="hljs-string">&quot;Challenge 1: <span class="hljs-subst">$(base64(bytes(str)</span>) == expected ? &quot;pass</span><span class="hljs-string">&quot; : &quot;fail</span><span class="hljs-string">&quot;)&quot;</span>)</code></pre>
+<p>Honestly a massive difference in approach. My beginner solution immediately reaches for a dependency to solve the puzzle, which is effective in its own way, but feels like cheating here. This time around, I didn&#39;t really consider looking for a package to solve this, since it felt against the spirit of the challenges.</p>
+<h1 id="challenge_2_xor_two_hex_strings"><a href="#challenge_2_xor_two_hex_strings" class="header-anchor">Challenge 2: XOR two hex strings</a></h1>
+<pre><code class="julia hljs"><span class="hljs-comment"># Beginner Randy</span>
+
+str1 = hex2bytes(<span class="hljs-string">&quot;1c0111001f010100061a024b53535009181c&quot;</span>)
+str2 = hex2bytes(<span class="hljs-string">&quot;686974207468652062756c6c277320657965&quot;</span>)
+
+goal = <span class="hljs-string">&quot;746865206b696420646f6e277420706c6179&quot;</span>
+
+out = str1 .⊻ str2
+
+<span class="hljs-meta">@assert</span> bytes2hex(out) == goal</code></pre>
+<pre><code class="julia hljs"><span class="hljs-comment"># Intermediate Randy</span>
+p2in = <span class="hljs-string">&quot;1c0111001f010100061a024b53535009181c&quot;</span>
+p2in2 = <span class="hljs-string">&quot;686974207468652062756c6c277320657965&quot;</span>
+p2exp = <span class="hljs-string">&quot;746865206b696420646f6e277420706c6179&quot;</span>
+
+println(<span class="hljs-string">&quot;Challenge 2: <span class="hljs-subst">$(xor.(bytes(p2in)</span>, bytes(p2in2)) == bytes(p2exp) ? &quot;pass</span><span class="hljs-string">&quot; : &quot;fail</span><span class="hljs-string">&quot;)&quot;</span>)</code></pre>
+<p>Essentially the same approach here.</p>
+<h1 id="challenge_3_single_byte_xor_cipher"><a href="#challenge_3_single_byte_xor_cipher" class="header-anchor">Challenge 3: Single Byte XOR Cipher</a></h1>
+<pre><code class="julia hljs"><span class="hljs-comment"># Beginner</span>
+str = hex2bytes(<span class="hljs-string">&quot;1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736&quot;</span>)
+keys = <span class="hljs-built_in">UInt8</span>[]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">255</span>
+    append!(keys, i)
+<span class="hljs-keyword">end</span>
+<span class="hljs-keyword">function</span> single_char_xor(hex_string, char)
+    out = <span class="hljs-built_in">UInt8</span>[]
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(hex_string)
+        append!(out, xor(char, hex_string[i]))
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> out
+<span class="hljs-keyword">end</span>
+out = <span class="hljs-built_in">Array</span>{<span class="hljs-built_in">UInt8</span>, <span class="hljs-number">2</span>}(<span class="hljs-literal">undef</span>, <span class="hljs-number">255</span>, <span class="hljs-number">34</span>)
+<span class="hljs-keyword">function</span> score_text(bytes)
+    score = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(bytes)
+        <span class="hljs-keyword">if</span> bytes[i] == <span class="hljs-number">0x61</span>; score += <span class="hljs-number">1</span>; <span class="hljs-keyword">end</span> <span class="hljs-comment"># a</span>
+        <span class="hljs-keyword">if</span> bytes[i] == <span class="hljs-number">0x65</span>; score += <span class="hljs-number">1</span>; <span class="hljs-keyword">end</span> <span class="hljs-comment"># e</span>
+        <span class="hljs-keyword">if</span> bytes[i] == <span class="hljs-number">0x69</span>; score += <span class="hljs-number">1</span>; <span class="hljs-keyword">end</span> <span class="hljs-comment"># i</span>
+        <span class="hljs-keyword">if</span> bytes[i] == <span class="hljs-number">0x6f</span>; score += <span class="hljs-number">1</span>; <span class="hljs-keyword">end</span> <span class="hljs-comment"># o</span>
+        <span class="hljs-keyword">if</span> bytes[i] == <span class="hljs-number">0x75</span>; score += <span class="hljs-number">1</span>; <span class="hljs-keyword">end</span> <span class="hljs-comment"># u</span>
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> score
+<span class="hljs-keyword">end</span>
+out = <span class="hljs-built_in">Array</span>{<span class="hljs-built_in">UInt8</span>, <span class="hljs-number">2</span>}(<span class="hljs-literal">undef</span>, <span class="hljs-number">255</span>, <span class="hljs-number">34</span>)
+scores = <span class="hljs-built_in">UInt16</span>[]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">255</span>
+    temp = single_char_xor(str, keys[i])
+    append!(scores, score_text(temp))
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">34</span>
+        out[i, j] = temp[j]
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+<span class="hljs-built_in">String</span>(out[findmax(scores)[<span class="hljs-number">2</span>], :])</code></pre>
+<pre><code class="julia hljs"><span class="hljs-comment"># Intermediate Solution</span>
+input3 = <span class="hljs-string">&quot;1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736&quot;</span>
+
+score_char(c::<span class="hljs-built_in">Char</span>) = c <span class="hljs-keyword">in</span> <span class="hljs-string">&quot;aeiou &quot;</span> ? <span class="hljs-number">16</span> :
+    c <span class="hljs-keyword">in</span> <span class="hljs-string">&quot;bcdfghjklmnpqrstvwxyz&quot;</span> ? <span class="hljs-number">8</span> :
+    c <span class="hljs-keyword">in</span> <span class="hljs-string">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span> ? <span class="hljs-number">4</span> :
+    <span class="hljs-built_in">Int</span>(c) &lt; <span class="hljs-number">32</span> ? -<span class="hljs-number">10</span> :
+    <span class="hljs-number">0</span>
+
+score_text(<span class="hljs-keyword">in</span>::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">UInt8</span>}) = sum(score_char.(<span class="hljs-built_in">Char</span>.(<span class="hljs-keyword">in</span>)))
+
+possibles = [xor.(bytes(input3), c) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-number">0x00</span>:<span class="hljs-number">0xff</span>]
+solution = *(<span class="hljs-built_in">Char</span>.(possibles[argmax(score_text.(possibles))])...)
+
+println(<span class="hljs-string">&quot;Challenge 3: <span class="hljs-variable">$solution</span>&quot;</span>)</code></pre>
+<p>This is stylistically night and day, to me. The beginner code is filled with garbage like loops that just fill vectors, multiple-line vowel checks, allocations, etc. The updated solution is much shorter and clearer, thanks to the use of single-line functions, list comprehensions, and the choice to use chars directly rather that the hex codes.</p>
+<h1 id="challenge_4_detect_single-char_xor_ciphers"><a href="#challenge_4_detect_single-char_xor_ciphers" class="header-anchor">Challenge 4: Detect Single-Char XOR Ciphers</a></h1>
+<pre><code class="julia hljs"><span class="hljs-comment"># Set 1 Challenge 4</span>
+<span class="hljs-comment"># Detecting Single-Char XOR Ciphers</span>
+
+<span class="hljs-comment"># Wrap the whole last challenge in a function</span>
+<span class="hljs-keyword">function</span> decrypt_single_char_xor(hex)
+    str = hex2bytes(hex)
+
+    keys = <span class="hljs-built_in">UInt8</span>[]
+
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">255</span>
+        append!(keys, i)
+    <span class="hljs-keyword">end</span>
+
+    out = <span class="hljs-built_in">Array</span>{<span class="hljs-built_in">UInt8</span>, <span class="hljs-number">2</span>}(<span class="hljs-literal">undef</span>, <span class="hljs-number">255</span>, length(str))
+    scores = <span class="hljs-built_in">Int16</span>[]
+
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">255</span>
+        temp = single_char_xor(str, keys[i])
+        append!(scores, score_text(temp))
+        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(temp)
+            out[i, j] = temp[j]
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-keyword">return</span> out[findmax(scores)[<span class="hljs-number">2</span>], :]
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># read file</span>
+file_in = readlines(<span class="hljs-string">&quot;D:\\Projects\\cryptopals-jl\\data\\4.txt&quot;</span>)
+
+<span class="hljs-comment"># get the most english of all of these</span>
+all_attempts = <span class="hljs-built_in">Array</span>{<span class="hljs-built_in">UInt8</span>, <span class="hljs-number">2</span>}(<span class="hljs-literal">undef</span>, length(file_in), length(file_in[<span class="hljs-number">1</span>]) ÷ <span class="hljs-number">2</span>)
+final_scores = <span class="hljs-built_in">Int16</span>[]
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(file_in)
+    temp2 = decrypt_single_char_xor(file_in[i])
+    append!(final_scores, score_text(temp2))
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(temp2)
+        all_attempts[i, j] = temp2[j]
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-built_in">String</span>(all_attempts[findmax(final_scores)[<span class="hljs-number">2</span>], :])</code></pre>
+<pre><code class="julia hljs">input4 = readlines(<span class="hljs-string">&quot;data/4.txt&quot;</span>)
+
+get_best(str::<span class="hljs-built_in">String</span>) = get_best(bytes(str))
+
+<span class="hljs-keyword">function</span> get_best(b::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">UInt8</span>})
+    possibles = [xor.(b, <span class="hljs-built_in">UInt8</span>(c)) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-number">0x00</span>:<span class="hljs-number">0xff</span>]
+    scores = score_text.(possibles)
+    solution = *(<span class="hljs-built_in">Char</span>.(possibles[argmax(scores)])...)
+    <span class="hljs-keyword">return</span> (maximum(scores), solution, (<span class="hljs-number">0x00</span>:<span class="hljs-number">0xff</span>)[argmax(scores)])
+<span class="hljs-keyword">end</span>
+
+each_best = get_best.(input4)
+
+println(<span class="hljs-string">&quot;Challenge 4: <span class="hljs-subst">$(each_best[argmax([e[<span class="hljs-number">1</span>] <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> each_best])</span>][2])&quot;</span>)</code></pre>
+<p>Better understanding and use of multiple dispatch, relative path rather than a hard-coded path for the file read.</p>
+<h1 id="challenge_5_encrypt_text_with_repeating_key_xor"><a href="#challenge_5_encrypt_text_with_repeating_key_xor" class="header-anchor">Challenge 5: Encrypt text with repeating key xor</a></h1>
+<pre><code class="julia hljs">stanza = <span class="hljs-string">&quot;Burning &#x27;em, if you ain&#x27;t quick and nimble
+I go crazy when I hear a cymbal&quot;</span>
+
+<span class="hljs-comment"># convert stanza to bytes</span>
+
+<span class="hljs-keyword">function</span> ascii_to_bytes(text)
+    bytes = <span class="hljs-built_in">UInt8</span>[]
+
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(text)
+        append!(bytes, <span class="hljs-built_in">Int</span>(text[i]))
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-keyword">return</span> bytes
+<span class="hljs-keyword">end</span>
+
+input = ascii_to_bytes(stanza)
+
+<span class="hljs-meta">@assert</span> <span class="hljs-built_in">String</span>(input) == stanza
+
+key = ascii_to_bytes(<span class="hljs-string">&quot;ICE&quot;</span>)
+
+<span class="hljs-keyword">function</span> repeating_key_encrypt(bytes, key)
+    ciphertext = <span class="hljs-built_in">UInt8</span>[]
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(bytes)
+        append!(ciphertext, xor(bytes[i], key[<span class="hljs-number">1</span> + mod(i - <span class="hljs-number">1</span>, length(key))]))
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> ciphertext
+<span class="hljs-keyword">end</span>
+
+target = <span class="hljs-string">&quot;0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f&quot;</span>
+
+<span class="hljs-meta">@assert</span> bytes2hex(repeating_key_encrypt(input, key)) == target</code></pre>
+<pre><code class="julia hljs">input5 = <span class="hljs-string">&quot;&quot;&quot;
+Burning &#x27;em, if you ain&#x27;t quick and nimble
+I go crazy when I hear a cymbal&quot;&quot;&quot;</span>
+
+<span class="hljs-keyword">function</span> recycle_to_length(key, len)
+    chars = [c <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> key]
+    full_repeats = len ÷ length(key)
+    partial = chars[<span class="hljs-number">1</span>:rem(len, length(key))]
+    <span class="hljs-keyword">return</span> vcat(repeat(chars, full_repeats), partial)
+<span class="hljs-keyword">end</span>
+
+ciphertext = xor.(<span class="hljs-built_in">UInt8</span>.([c <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> input5]), <span class="hljs-built_in">UInt8</span>.(recycle_to_length(<span class="hljs-string">&quot;ICE&quot;</span>, length(input5))))
+expected = bytes(<span class="hljs-string">&quot;0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f&quot;</span>)
+
+println(<span class="hljs-string">&quot;Challenge 5: <span class="hljs-subst">$(ciphertext == expected ? <span class="hljs-string">&quot;pass&quot;</span> : <span class="hljs-string">&quot;fail&quot;</span>)</span>&quot;</span>)</code></pre>
+<div class="page-foot">
+    <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
+    <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the
+    <a href="https://julialang.org">Julia programming language</a>. Design
+    inspired by
+    <a href="https://owickstrom.github.io/the-monospace-web/"
+        >The Monospace Web</a
+    >. Code for this website is available on
+    <a href="https://github.com/rdboyes/randy-pub">Github</a>.
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>
+    hljs.highlightAll();
+    hljs.configure({ tabReplace: "    " });
+</script>
+
+    
+  </body>
+</html>
