@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="/css/basic.css" />
         <link rel="icon" href="/assets/favicon.png" />
         
-        <title>Developing TidierPlots.jl, Part 2</title>
+        <title>Causal Inference: What If (Chapters 1 - 9)</title>
         
     </head>
     <body>
@@ -187,61 +187,162 @@
     </script>
 </html>
 <div class="franklin-content"><hr />
-<h1 id="in_progress"><a href="#in_progress" class="header-anchor">In Progress</a></h1>
-<h2 id="quick_wins"><a href="#quick_wins" class="header-anchor">Quick Wins</a></h2>
-<p>The early development on TidierPlots felt seamless. R&#39;s ggplot has a behaviour where plots will show automatically when you create them, and I was able to replicate that experience with a call to <code>display</code> when the <code>&#43;</code> operation was used to construct a ggplot object:</p>
-<pre><code class="julia hljs"><span class="hljs-keyword">function</span> Base.:+(x::ggplot, y...)::ggplot
-    result = ggplot(vcat(x.geoms, [i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> y]),
-        x.default_aes,
-        x.data,
-        x.axis)
+<p>I&#39;m rereading Miguel Hernan&#39;s excellent Causal Inference textbook and working the examples in julia as I go. Chapters 1-9 are light on models, since they generally don&#39;t consider uncertainty due to sampling.</p>
+<p>The first example gives us the counterfactual outcomes for heart surgery in Table 1.1 and the observed outcomes in Table 1.2. The average causal effect is zero by any measure, but the associational effect measures all show effect.  </p>
+<pre><code class="julia hljs"><span class="hljs-comment"># Table 1.1</span>
+<span class="hljs-keyword">using</span> TidierData
 
-    <span class="hljs-comment"># don&#x27;t tell the julia police</span>
-    <span class="hljs-keyword">if</span> autoplot
-        display(draw_ggplot(result))
-    <span class="hljs-keyword">end</span>
+hearts = <span class="hljs-meta">@chain</span> DataFrame(<span class="hljs-keyword">in</span> = split(<span class="hljs-string">&quot;&quot;&quot;
+Rheia 0 1 1 0 0 0
+Kronos 1 0 0 0 1 0
+Demeter 0 0 1 0 0 0
+Hades 0 0 0 0 0 0
+Hestia 0 0 1 1 0 0
+Poseidon 1 0 0 1 0 0
+Hera 0 0 1 1 0 0
+Zeus 0 1 0 1 1 0
+Artemis 1 1 1 0 1 1
+Apollo 1 0 0 0 1 1
+Leto 0 1 1 0 0 1
+Ares 1 1 0 1 1 1
+Athena 1 1 1 1 1 1
+Hephaestus 0 1 0 1 1 1
+Aphrodite 0 1 1 1 1 1
+Polyphemus 0 1 0 1 1 1
+Persephone 1 1 1 1 1 1
+Hermes 1 0 0 1 0 1
+Hebe 1 0 1 1 0 1
+Dionysus 1 0 0 1 0 1&quot;&quot;&quot;</span>, <span class="hljs-string">&quot;\n&quot;</span>))
+<span class="hljs-keyword">begin</span>
+    <span class="hljs-meta">@separate</span>(<span class="hljs-keyword">in</span>, (Name, Y0, Y1, V, A, Y, L), <span class="hljs-string">&quot; &quot;</span>)
+    <span class="hljs-meta">@mutate</span>(
+        Y0 = as_integer(Y0), 
+        Y1 = as_integer(Y1), 
+        V = as_integer(V),
+        A = as_integer(A),
+        Y = as_integer(Y),
+        L = as_integer(L),
+        V2 = <span class="hljs-number">1</span>
+    )
+<span class="hljs-keyword">end</span>
 
-    <span class="hljs-keyword">return</span> result
+PrY01 = mean(hearts.Y0)
+PrY11 = mean(hearts.Y1)
+
+risk_diff = PrY11 - PrY01 <span class="hljs-comment"># 0.0</span>
+risk_ratio = PrY11 / PrY01 <span class="hljs-comment"># 1.0</span>
+
+PrY10 = mean(<span class="hljs-number">1</span> .- hearts.Y1)
+PrY00 = mean(<span class="hljs-number">1</span> .- hearts.Y0)
+
+odds_ratio = (PrY11/PrY10)/(PrY01/PrY00) <span class="hljs-comment"># 1.0</span></code></pre>
+<pre><code class="julia hljs">PrY1 = <span class="hljs-meta">@chain</span> hearts <span class="hljs-keyword">begin</span>
+    groupby(:A)
+    combine(:Y =&gt; (x -&gt; sum(x) // length(x)) =&gt; [:Y])
+<span class="hljs-keyword">end</span>
+    
+PrY1A0, PrY1A1 = PrY1.Y
+PrY0A0, PrY0A1 = <span class="hljs-number">1</span> .- PrY1.Y
+ 
+associational_risk_diff = PrY1A1 - PrY1A0 <span class="hljs-comment"># 10/91</span>
+associational_risk_ratio = PrY1A1 / PrY1A0 <span class="hljs-comment"># 49/39</span>
+associational_odds_ratio = (PrY1A1/PrY0A1)/(PrY1A0/PrY0A0) <span class="hljs-comment"># 14/9</span></code></pre>
+<h1 id="chapter_2"><a href="#chapter_2" class="header-anchor">Chapter 2</a></h1>
+<p>Chapter 2&#39;s examples concern the analysis of the heart data as a randomized experiment. If the randomization is assumed to be marginal, we get a positive risk ratio. If conditional, calculating the CRR can be done directly or through IPW to get the same answer &#40;RR &#61; 1.0&#41;. </p>
+<pre><code class="julia hljs">PrY1 = <span class="hljs-meta">@chain</span> hearts <span class="hljs-keyword">begin</span>
+    groupby(:A)
+    combine(:Y =&gt; (x -&gt; sum(x) // length(x)) =&gt; [:Y])
+<span class="hljs-keyword">end</span>
+
+PrY1A0, PrY1A1 = PrY1.Y
+
+rr_marginal_experiment = PrY1A1 / PrY1A0
+
+PrY1_L = <span class="hljs-meta">@chain</span> hearts <span class="hljs-keyword">begin</span>
+    groupby([:L, :A])
+    combine(
+        :Y =&gt; (x -&gt; sum(x) // length(x)) =&gt; :PrY, 
+        :Y =&gt; length =&gt; :n
+    )
+<span class="hljs-keyword">end</span>
+
+crr = <span class="hljs-meta">@chain</span> PrY1_L <span class="hljs-keyword">begin</span>
+    groupby([:L])
+    combine([:PrY, :n] =&gt; ((x,y) -&gt; x * sum(y)) =&gt; :wsum, :A)
+    groupby([:A])
+    combine([:wsum] =&gt; (x -&gt; sum(x)/<span class="hljs-number">20</span>) =&gt; :crr)
+<span class="hljs-keyword">end</span>
+
+/(crr.crr...) <span class="hljs-comment"># 1/1</span>
+
+<span class="hljs-comment"># IP weighted</span>
+
+ipw = <span class="hljs-meta">@chain</span> PrY1_L <span class="hljs-keyword">begin</span>
+    groupby(:L)
+    <span class="hljs-meta">@mutate</span>(ipw = sum(n)/n)
+    <span class="hljs-meta">@ungroup</span>()
+    groupby(:A)
+    <span class="hljs-meta">@summarize</span>(outcomes = sum(ipw * PrY * n))
+<span class="hljs-keyword">end</span>
+
+/(ipw.outcomes...) <span class="hljs-comment"># 1.0</span></code></pre>
+<h1 id="chapter"><a href="#chapter" class="header-anchor">Chapter </a></h1>
+<pre><code class="julia hljs"><span class="hljs-meta">@chain</span> hearts <span class="hljs-keyword">begin</span>
+    groupby(:V)
+    <span class="hljs-meta">@summarize</span>(PrY1 = mean(Y1), PrY0 = mean(Y0))
+    <span class="hljs-meta">@mutate</span>(RR = PrY1/PrY0, RD = PrY1-PrY0)
 <span class="hljs-keyword">end</span></code></pre>
-<p>I also quickly added support for <code>geoms</code> that lined up nicely with AlgebraOfGraphics plots, including <code>geom_bar</code>, <code>geom_col</code>, <code>geom_violin</code>, <code>geom_path</code>, <code>geom_text</code>, and <code>geom_boxplot</code>, and convenience functions like <code>labs</code>, <code>lims</code>, themes, saving plots, facetting, and more. I tried to follow SemVer as best as I could and bumped by version number dutifully up to 0.3.2. Collaborators started to show up, adding a logo for the package and some documentation. Things were going quite well, then I hit the first bump in the road in the form of a questionable <code>eval&#40;&#41;</code> call.</p>
-<h2 id="the_first_mistake_-_macros"><a href="#the_first_mistake_-_macros" class="header-anchor">The First Mistake - Macros</a></h2>
-<p>Julia has a powerful but slightly unwieldy macro system. As far as I can tell, people use it for two very different reasons instead of normal functions.</p>
-<ul>
-<li><p>The intended reason, which is to write code that you want to evaluate at compile time rather than run time.</p>
-</li>
-<li><p>To be sneaky and write non-standard code that nonetheless runs in julia.</p>
-</li>
-</ul>
-<p>Tidier.jl, and more specifically TidierData.jl, uses macros mostly for reason 2, and reason 1 is - if anything - a downside. I had written the whole package to use macros to be consistent with how the rest of the Tidier system was shaping up. This resulted in having this block of code inside the function that builds geoms:</p>
-<pre><code class="julia hljs"><span class="hljs-comment"># if data is specified, call a questionable eval to grab it as a layer</span>
-<span class="hljs-keyword">if</span> haskey(args_dict, <span class="hljs-string">&quot;data&quot;</span>)
-  <span class="hljs-comment"># if the code is running in a Pluto.jl notebook</span>
-  <span class="hljs-keyword">if</span> !isnothing(match(<span class="hljs-string">r&quot;#==#&quot;</span>, <span class="hljs-meta">@__FILE__</span>))
-    plot_data = AlgebraOfGraphics.data(eval(args_dict[<span class="hljs-string">&quot;data&quot;</span>]))
-  <span class="hljs-keyword">else</span>
-    plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict[<span class="hljs-string">&quot;data&quot;</span>]))
-  <span class="hljs-keyword">end</span>
-<span class="hljs-keyword">else</span>
-  plot_data = mapping()
+<pre><code class="julia hljs">hearts2 = <span class="hljs-meta">@chain</span> DataFrame(<span class="hljs-keyword">in</span> = split(<span class="hljs-string">&quot;&quot;&quot;
+Cybele 0 0 0
+Saturn 0 0 1
+Ceres 0 0 0
+Pluto 0 0 0
+Vesta 0 1 0
+Neptune 0 1 0
+Juno 0 1 1
+Jupiter 0 1 1
+Diana 1 0 0
+Phoebus 1 0 1
+Latona 1 0 0
+Mars 1 1 1
+Minerva 1 1 1
+Vulcan 1 1 1
+Venus 1 1 1
+Seneca 1 1 1
+Proserpina 1 1 1
+Mercury 1 1 0
+Juventas 1 1 0
+Bacchus 1 1 0&quot;&quot;&quot;</span>, <span class="hljs-string">&quot;\n&quot;</span>)) <span class="hljs-keyword">begin</span>
+    <span class="hljs-meta">@separate</span>(<span class="hljs-keyword">in</span>, (Name, L, A, Y), <span class="hljs-string">&quot; &quot;</span>)
+    <span class="hljs-meta">@mutate</span>(L = as_integer(L), A = as_integer(A), Y = as_integer(Y), V2 = <span class="hljs-number">0</span>)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@chain</span> <span class="hljs-meta">@bind_rows</span>(<span class="hljs-meta">@select</span>(hearts, Name, L, A, Y, V2), hearts2) <span class="hljs-keyword">begin</span>
+    groupby([:L, :A])
+    combine(
+        :Y =&gt; (x -&gt; sum(x) // length(x)) =&gt; :PrY, 
+        :Y =&gt; length =&gt; :n
+    )
+    <span class="hljs-meta">@ungroup</span>
+    groupby(:L)
+    <span class="hljs-meta">@mutate</span>(ipw = sum(n)/n)
+    <span class="hljs-meta">@ungroup</span>
+    groupby(:A)
+    <span class="hljs-meta">@summarize</span>(PrY = sum(ipw * PrY * n)/<span class="hljs-number">40</span>)
 <span class="hljs-keyword">end</span></code></pre>
-<p>Ew. As I looked upon the monstrosity I had written, I had a realization. I didn&#39;t actually need macros for anything except the <code>aes</code> call. See, TidierData needs macros so that people can write things like:</p>
-<pre><code class="julia hljs"><span class="hljs-meta">@mutate</span>(data, A = B * <span class="hljs-number">2</span>)</code></pre>
-<p>Where A and B are columns in data, <em>not objects in the global environment as julia would normally interpret them</em>. I needed macros for things like:</p>
-<pre><code class="julia hljs"><span class="hljs-meta">@geom_point</span>(data, aes(x = x_col, y = y_col))</code></pre>
-<p>But in that call, <code>data</code> really ideally would just be the data - hence the questionable <code>eval</code> code above. Thus began the first full refactor of TidierPlots, and version 0.4.0 completely broke all previous code but switching out macros for function equivalents.</p>
-<h2 id="the_second_mistake_-_too_many_layers"><a href="#the_second_mistake_-_too_many_layers" class="header-anchor">The Second Mistake - Too many layers</a></h2>
-<p>Just as I finished rewriting the entire package, I realized that I needed to rewrite it again. TidierPlots was originally set up like this:</p>
-
-<figure>
-<pre>
-┌─────────────┐         ┌───────────────────┐         ┌───────────┐
-│ TidierPlots │ ──────► │ AlgebraOfGraphics │ ──────► │   Makie   │
-└─────────────┘         └───────────────────┘         └───────────┘
-</pre>
-</figure>
-
-<p>But that meant that TidierPlots could only support things that AlegebraOfGraphics supports, and - at the time - that wasn&#39;t too long of a list. For example, one thing that it just couldn&#39;t seem to do was make a horizontal bar chart. I set out to strip away the AoG middleman, and version 0.5.0 was born. Thankfully, most of the code that had been written up until that point was focused on building the objects, so it was mostly a matter of swapping out the interpretation part from AoG to Makie&#39;s shiny new SpecApi.</p>
-<hr />
+<pre><code class="julia hljs"><span class="hljs-meta">@chain</span> hearts2 <span class="hljs-keyword">begin</span>
+    groupby([:L, :A])
+    combine(
+        :Y =&gt; (x -&gt; sum(x) // length(x)) =&gt; :PrY, 
+        :Y =&gt; length =&gt; :n
+    )
+    <span class="hljs-meta">@ungroup</span>
+    groupby(:L)
+    <span class="hljs-meta">@mutate</span>(ipw = sum(n)/n)
+    <span class="hljs-meta">@ungroup</span>()
+    groupby(:A)
+    <span class="hljs-meta">@summarize</span>(PrY = sum(ipw * PrY * n)/<span class="hljs-number">20</span>)
+<span class="hljs-keyword">end</span></code></pre>
 <div class="page-foot">
     <a href="https://opensource.org/license/mit">MIT License</a> Randy Boyes.  Website built with
     <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the
