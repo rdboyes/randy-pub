@@ -10,29 +10,9 @@ rss = "A list of working papers and publications."
 <span style="color:#5BC5E2;">print</span>(Publications)
 ~~~
 
-**GroupedDataFrame with 4 groups based on key: type**
+**GroupedDataFrame with 3 groups based on key: type**
 
-### First Group (5 rows): type = "Open Source Software"
-
-{{ make_table
-
-    "Julia" "Firebase.jl (Maintaining)"
-    "https://github.com/rboyes/Firebase.jl" "GitHub" "2025"
-
-    "R" "lineaR: Linear GraphQL API Wrapper for R"
-    "https://github.com/Presage-Group/lineaR" "GitHub" "2025"
-
-    "Julia" "Sentry.jl: Julia Sentry SDK"
-    "https://github.com/Presage-Group/Sentry.jl" "GitHub" "2025"
-
-    "Julia" "TidierPlots.jl: ggplot2 for julia"
-    "https://github.com/TidierOrg/TidierPlots.jl" "GitHub" "2024"
-
-    "R" "Forester: Easy publication-ready forest plots"
-    "https://github.com/rdboyes/forester" "GitHub" "2021"
-}}
-
-### Second Group (3 rows): type = "Preprints"
+### First Group (3 rows): type = "Preprints"
 
 {{ make_table
 
@@ -55,7 +35,7 @@ rss = "A list of working papers and publications."
   "2023"
 }}
 
-### Third Group (12 rows): type = "Published Work ([Google Scholar](https://scholar.google.ca/citations?hl=en&user=T7SV6T0AAAAJ&view_op=list_works&sortby=pubdate))"
+### Second Group (12 rows): type = "Published Work ([Google Scholar](https://scholar.google.ca/citations?hl=en&user=T7SV6T0AAAAJ&view_op=list_works&sortby=pubdate))"
 
 {{ make_table_from_csv "_assets/pubs.csv"}}
 

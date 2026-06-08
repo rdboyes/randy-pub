@@ -16,13 +16,16 @@ rss = "A list of selected projects."
            autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Julia prompt" />
   </div>
   <noscript>
-    PresageWebsite · FitForFlight · TidierPlots · positron-julia. Enable
-    JavaScript for the interactive prompt, or see the links below.
+    Enable JavaScript for the interactive prompt, or see the links below.
     <ul>
       <li><a href="https://presagegroup.com/">PresageWebsite</a></li>
       <li><a href="https://presagegroup.com/pages/services/fit-for-flight/">FitForFlight</a></li>
       <li><a href="https://github.com/TidierOrg/TidierPlots.jl">TidierPlots</a></li>
       <li><a href="https://github.com/TidierOrg/positron-julia">positron-julia</a></li>
+      <li><a href="https://github.com/rboyes/Firebase.jl">Firebase.jl</a></li>
+      <li><a href="https://github.com/Presage-Group/Sentry.jl">Sentry.jl</a></li>
+      <li><a href="https://github.com/Presage-Group/lineaR">lineaR</a></li>
+      <li><a href="https://github.com/rdboyes/forester">forester</a></li>
     </ul>
   </noscript>
 </div>
@@ -65,6 +68,42 @@ rss = "A list of selected projects."
       linktext: "positron-julia",
       year: 2026,
       desc: "A Julia language extension for the Positron IDE."
+    },
+    firebasejl: {
+      name: "Firebase.jl",
+      category: "GitHub",
+      language: "Julia",
+      link: "https://github.com/rboyes/Firebase.jl",
+      linktext: "Firebase.jl",
+      year: 2025,
+      desc: "A Julia wrapper for the Firebase REST API (maintainer)."
+    },
+    sentryjl: {
+      name: "Sentry.jl",
+      category: "GitHub",
+      language: "Julia",
+      link: "https://github.com/Presage-Group/Sentry.jl",
+      linktext: "Sentry.jl",
+      year: 2025,
+      desc: "A Julia SDK for the Sentry error-tracking platform."
+    },
+    linear: {
+      name: "lineaR",
+      category: "GitHub",
+      language: "R",
+      link: "https://github.com/Presage-Group/lineaR",
+      linktext: "lineaR",
+      year: 2025,
+      desc: "An R wrapper for the Linear GraphQL API."
+    },
+    forester: {
+      name: "forester",
+      category: "GitHub",
+      language: "R",
+      link: "https://github.com/rdboyes/forester",
+      linktext: "forester",
+      year: 2021,
+      desc: "An R package for easy, publication-ready forest plots."
     }
   };
 
@@ -109,8 +148,26 @@ rss = "A list of selected projects."
     history.appendChild(el(
       '<div class="repl-result">' +
         Object.values(projects)
-          .map((p) => '<div>  <span class="jl-blue">' + esc(p.name) + "</span> &mdash; " + esc(p.language) + " (" + p.year + ")</div>")
+          .map((p) => '<div>  <span class="jl-blue repl-cmd" data-cmd="' + esc(p.name) + '">' + esc(p.name) + "</span> &mdash; " + esc(p.language) + " (" + p.year + ")</div>")
           .join("") +
+      "</div>"
+    ));
+  }
+
+  // Authentic Symbol display: bare :name when it's a valid identifier,
+  // Symbol("name") otherwise (e.g. dotted or hyphenated names).
+  function symbolRepr(name) {
+    return /^[A-Za-z_][A-Za-z0-9_!]*$/.test(name)
+      ? ":" + esc(name)
+      : 'Symbol("' + esc(name) + '")';
+  }
+
+  function showNames() {
+    const vals = Object.values(projects);
+    history.appendChild(el(
+      '<div class="repl-result">' +
+        "<div>" + vals.length + "-element Vector{Symbol}:</div>" +
+        vals.map((p) => "<div> " + symbolRepr(p.name) + "</div>").join("") +
       "</div>"
     ));
   }
@@ -126,11 +183,11 @@ rss = "A list of selected projects."
 
     const key = norm(cmd);
     if (key === "" || key === "help") {
-      history.appendChild(el('<div class="repl-result">Available: <span class="jl-blue">PresageWebsite</span>, <span class="jl-blue">FitForFlight</span>, <span class="jl-blue">TidierPlots</span>, <span class="jl-blue">positron-julia</span>. Type one to inspect it.</div>'));
+      showList();
       return;
     }
     if (key === "namesmain" || key === "names") {
-      history.appendChild(el('<div class="repl-result"><div>4-element Vector{Symbol}:</div><div> :PresageWebsite</div><div> :FitForFlight</div><div> :TidierPlots</div><div> Symbol("positron-julia")</div></div>'));
+      showNames();
       return;
     }
     if (key === "clear" || key === "cls") {
@@ -154,8 +211,15 @@ rss = "A list of selected projects."
     }
   });
 
-  // Clicking anywhere in the terminal focuses the prompt.
+  // Clicking a name in the list runs it as if it were typed at the prompt;
+  // clicking anywhere else in the terminal just focuses the prompt.
   repl.addEventListener("click", function (e) {
+    const cmd = e.target.closest(".repl-cmd");
+    if (cmd) {
+      run(cmd.getAttribute("data-cmd"));
+      input.value = "";
+      input.scrollIntoView({ block: "nearest" });
+    }
     if (e.target.tagName !== "A") input.focus();
   });
 })();
