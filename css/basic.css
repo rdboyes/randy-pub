@@ -719,3 +719,14 @@ label input {
 .repl a:visited {
     color: #5bc5e2;
 }
+
+.repl .repl-cmd {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+}
+
+.repl .repl-cmd:hover {
+    color: #c0caf5;
+}
