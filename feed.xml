@@ -23,6 +23,25 @@
 
 <item>
   <title>
+    <![CDATA[  Projects  ]]>
+  </title>
+  <link> http://www.randy.pub/projects/index.html </link>
+  <guid> http://www.randy.pub/projects/index.html </guid>
+  <description>
+    <![CDATA[  A list of selected projects.  ]]>
+  </description>  
+    
+  <pubDate>Mon, 10 Nov 2025 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Randy Boyes</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
     <![CDATA[  Resume  ]]>
   </title>
   <link> http://www.randy.pub/resume/index.html </link>
