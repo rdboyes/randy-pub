@@ -627,3 +627,95 @@ label input {
 .plaintext {
     background: #242627;
 }
+
+/* Projects REPL */
+
+.repl {
+    background: #1a1b26;
+    color: #c0caf5;
+    border: var(--border-thickness) solid var(--text-color);
+    padding: calc(var(--line-height) - var(--border-thickness)) 1ch;
+    margin: var(--line-height) 0;
+    font-family: var(--font-family);
+    line-height: var(--line-height);
+    cursor: text;
+    overflow-x: auto;
+}
+
+/* Keep REPL lines on the baseline grid instead of the global sibling gap. */
+.repl * + * {
+    margin-top: 0;
+}
+
+.repl .repl-line,
+.repl .repl-result,
+.repl .repl-comment,
+.repl .repl-desc {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.repl .repl-result {
+    margin-bottom: var(--line-height);
+}
+
+.repl .repl-comment {
+    color: #565f89;
+    margin-bottom: var(--line-height);
+}
+
+.repl .repl-desc {
+    padding-left: 2ch;
+    margin-top: var(--line-height);
+}
+
+.repl .repl-inputline {
+    display: flex;
+    align-items: baseline;
+}
+
+.repl .repl-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    color: #c0caf5;
+    font: inherit;
+    font-family: var(--font-family);
+    height: var(--line-height);
+    padding: 0 0 0 1ch;
+    margin: 0;
+    outline: none;
+    -webkit-appearance: none;
+    caret-color: #c0caf5;
+}
+
+.repl .repl-input:focus {
+    outline: none;
+}
+
+.repl .jl-green {
+    color: #70c66b;
+    font-weight: var(--font-weight-bold);
+}
+.repl .jl-blue {
+    color: #5bc5e2;
+}
+.repl .jl-magenta {
+    color: #bb9af7;
+}
+.repl .jl-yellow {
+    color: #e0af68;
+}
+.repl .jl-red {
+    color: #f7768e;
+    font-weight: var(--font-weight-bold);
+}
+.repl .jl-string {
+    color: #9ece6a;
+}
+
+.repl a:link,
+.repl a:visited {
+    color: #5bc5e2;
+}
